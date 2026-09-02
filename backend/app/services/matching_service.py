@@ -8,6 +8,8 @@ from app.models.institution import Institution
 from app.models.project import Project, ProjectStatus
 from app.core.exceptions import NotFoundError, ValidationError
 
+from app.ai.capability_matcher import capability_matcher
+
 class MatchingService:
     def __init__(self, db: AsyncSession):
         self.db = db

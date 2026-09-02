@@ -56,11 +56,16 @@ CONFIG_DIR = Path(__file__).parent / "config"
 # — e.g. no network access, no GPU, model not cached yet.
 # ---------------------------------------------------------------------------
 try:
+    import torch
     from sentence_transformers import SentenceTransformer
 
     _ST_AVAILABLE = True
+    # Use CUDA (RTX 3050 / any NVIDIA GPU) when the CUDA wheel is installed.
+    # Falls back to CPU automatically if CUDA is not available.
+    _DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 except ImportError:
     _ST_AVAILABLE = False
+    _DEVICE = "cpu"
 
 
 def load_config(name: str) -> dict:
@@ -296,7 +301,7 @@ class DomainClassifier:
 
         if _ST_AVAILABLE:
             try:
-                self._model = SentenceTransformer("all-MiniLM-L6-v2")
+                self._model = SentenceTransformer("all-MiniLM-L6-v2", device=_DEVICE)
                 descriptions = [d["description"] for d in self.domains]
                 self._domain_embeddings = self._model.encode(descriptions, normalize_embeddings=True)
                 self.method = "embedding"
@@ -862,12 +867,24 @@ try:
 
     @app.get("/health")
     def health():
+        cuda_available = False
+        cuda_device_name = None
+        try:
+            import torch
+            cuda_available = torch.cuda.is_available()
+            if cuda_available:
+                cuda_device_name = torch.cuda.get_device_name(0)
+        except ImportError:
+            pass
         return {
             "status": "ok",
             "service": "civic-complaint-triage",
             "version": "2.0.0",
             "domain_classifier_method": _pipeline.domain_classifier.method,
             "domains_loaded": len(_pipeline.domain_classifier.domain_names),
+            "cuda_available": cuda_available,
+            "cuda_device": cuda_device_name,
+            "inference_device": _DEVICE,
         }
 
     @app.get("/domains")

@@ -17,6 +17,14 @@ class ChallengeCreate(BaseModel):
     is_anonymous: bool = False
     affected_population: Optional[int] = None
 
+    @property
+    def latitude(self) -> Optional[float]:
+        return self.location.latitude if self.location else None
+
+    @property
+    def longitude(self) -> Optional[float]:
+        return self.location.longitude if self.location else None
+
 class ChallengeUpdate(BaseModel):
     title: Optional[str] = None
     narrative: Optional[str] = None
@@ -25,11 +33,12 @@ class ChallengeUpdate(BaseModel):
     affected_population: Optional[int] = None
 
 class ChallengeMediaResponse(BaseModel):
-    id: UUID
+    id: Optional[UUID] = None
     file_url: str
     file_type: str
-    file_name: str
-    file_size: int
+    file_name: Optional[str] = None
+    file_size: Optional[int] = None
+    metadata_json: Optional[dict] = None
     model_config = ConfigDict(from_attributes=True)
 
 class ChallengeResponse(BaseModel):

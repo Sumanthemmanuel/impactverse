@@ -36,51 +36,89 @@ def enrich_challenge(self, challenge_id: str):
                 logger.warning('Challenge not found for enrichment', challenge_id=challenge_id)
                 return
             
-            # 1. Generate embedding
-            from app.ai.embeddings import embedding_service
+            import httpx
+            from app.core.constants import ChallengeDomain, ChallengeSeverity
+            from app.utils.geo import extract_lat_lng
+            
             text = f"{challenge.title} {challenge.narrative}"
-            embedding = embedding_service.get_embedding(text)
-            challenge.embedding = embedding
+
+            # Extract lat/lng from the challenge's PostGIS geometry so the
+            # classifier can run geo-validation, nearest-district hint, and
+            # spatial deduplication.
+            coords = extract_lat_lng(challenge.location) if challenge.location else None
+            lat = coords[0] if coords else None
+            lng = coords[1] if coords else None
+
+            # Fallback: check the most-recently-uploaded image's EXIF GPS if
+            # the challenge location geometry is not set yet.
+            if lat is None:
+                from sqlalchemy import select, desc
+                from app.models.challenge import ChallengeMedia
+                media_stmt = (
+                    select(ChallengeMedia)
+                    .where(ChallengeMedia.challenge_id == challenge.id)
+                    .order_by(desc(ChallengeMedia.created_at))
+                    .limit(1)
+                )
+                latest_media = session.execute(media_stmt).scalar_one_or_none()
+                if latest_media and latest_media.metadata_json:
+                    lat = latest_media.metadata_json.get("gps_latitude")
+                    lng = latest_media.metadata_json.get("gps_longitude")
             
-            # 2. Classify domain
-            from app.ai.classifier import classifier
-            domain, confidence = classifier.classify_domain(text)
-            challenge.ai_domain = domain.value
-            challenge.ai_confidence = confidence
-            
-            # 3. Extract tags
-            tags = classifier.extract_tags(text)
-            challenge.ai_tags = tags
-            
-            # 4. Generate summary
-            summary = classifier.generate_summary(text)
-            challenge.ai_summary = summary
-            
-            # 5. Impact score
-            from app.ai.impact_scorer import impact_scorer
-            from app.ai.text_extractor import text_extractor
-            urgency_count = text_extractor.count_urgency_indicators(text)
-            media_count = 0  # Will be updated when media is attached
-            has_location = challenge.location is not None
-            
-            score, breakdown = impact_scorer.compute_impact_score(
-                severity=challenge.severity,
-                affected_population=challenge.affected_population,
-                urgency_keywords_found=urgency_count,
-                evidence_count=media_count,
-                has_location=has_location,
-                has_media=False,
-                domain=challenge.domain,
-            )
-            challenge.impact_score = score
-            challenge.evidence_score = impact_scorer.compute_evidence_score(
-                media_count=media_count,
-                has_location=has_location,
-                narrative_length=len(challenge.narrative),
-            )
+            try:
+                with httpx.Client(timeout=15.0) as client:
+                    response = client.post(
+                        settings.CLASSIFIER_API_URL,
+                        json={"text": text, "lat": lat, "lng": lng}
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                    
+                    # Map domain string back to Enum if possible
+                    # e.g., "Water Resources" -> ChallengeDomain.WATER_RESOURCES
+                    domain_str = data.get("domain")
+                    if domain_str:
+                        # Find matching enum value
+                        for d in ChallengeDomain:
+                            if d.value.lower() == domain_str.lower():
+                                challenge.ai_domain = d.value
+                                challenge.domain = d
+                                break
+                    
+                    challenge.ai_confidence = data.get("confidence")
+                    
+                    # Update impact score based on priority_score from microservice
+                    if data.get("priority_score") is not None:
+                        challenge.impact_score = float(data.get("priority_score"))
+                    
+                    # Map severity_boost to ChallengeSeverity
+                    boost = data.get("severity_boost", 0.0)
+                    if boost >= 10.0:
+                        challenge.severity = ChallengeSeverity.CRITICAL
+                    elif boost >= 6.0:
+                        challenge.severity = ChallengeSeverity.HIGH
+                    elif boost >= 3.0:
+                        challenge.severity = ChallengeSeverity.MEDIUM
+                    else:
+                        challenge.severity = ChallengeSeverity.LOW
+
+                    # Store district hint from geo-validation if challenge lacks one
+                    geo_val = data.get("geo_validation") or {}
+                    district_hint = geo_val.get("district_hint")
+                    if district_hint and not challenge.district:
+                        challenge.district = district_hint
+
+                    # Basic tagging for the DB
+                    if data.get("top_3_predictions"):
+                        challenge.ai_tags = [p["domain"] for p in data["top_3_predictions"]]
+                    
+            except Exception as e:
+                logger.error("Failed to call classifier microservice", error=str(e))
+                # Fallback handled by Celery retry
+                raise e
             
             session.commit()
-            logger.info('Challenge enriched successfully', challenge_id=challenge_id, impact_score=score)
+            logger.info('Challenge enriched successfully via microservice', challenge_id=challenge_id, impact_score=challenge.impact_score)
             
     except Exception as exc:
         logger.error('Challenge enrichment failed', challenge_id=challenge_id, error=str(exc))

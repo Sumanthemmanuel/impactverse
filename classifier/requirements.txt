@@ -2,10 +2,20 @@
 numpy>=1.26
 scikit-learn>=1.4
 
+# PyTorch — install the CUDA wheel matching your GPU (RTX 3050 → cu128).
+# Install it directly from the .whl you downloaded, NOT from PyPI, so pip
+# cannot silently downgrade it to the CPU build:
+#   pip install torch-2.11.0+cu128-cp314-cp314-win_amd64.whl --no-deps
+# Do NOT add torchvision here — its PyPI wheel targets torch 2.14 (CPU) and
+# will break this CUDA installation if pip resolves it as a dependency.
+torch>=2.2
+
 # Optional but recommended: zero-shot embedding domain classification.
-# If this is missing OR the model weights can't be downloaded (no network,
-# offline demo, etc.), the service automatically falls back to keyword
-# matching — nothing breaks, `method` field just reports "keyword".
+# SentenceTransformer will automatically use the GPU (CUDA) when torch with
+# CUDA support is installed, giving ~10-20x faster encoding than CPU.
+# If sentence-transformers is missing OR the model weights can't be downloaded
+# (no network, offline demo, etc.), the service automatically falls back to
+# keyword matching — nothing breaks, `method` field just reports "keyword".
 sentence-transformers>=2.2
 
 # HTTP layer (optional — pipeline works as a plain library without these,

@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     EMBEDDING_BATCH_SIZE: int = 16
     SIMILARITY_THRESHOLD: float = 0.7
     DUPLICATE_SIMILARITY_THRESHOLD: float = 0.95
+    CLASSIFIER_API_URL: str = "http://localhost:8001/classify/full"
 
     # SMTP Settings
     SMTP_HOST: Optional[str] = None

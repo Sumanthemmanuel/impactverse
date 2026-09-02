@@ -8,7 +8,7 @@ from app.schemas.user import UserResponse
 from app.schemas.challenge import ChallengeResponse
 from app.schemas.common import PaginatedResponse
 from app.services.user import UserService
-from app.services.challenge import ChallengeService
+from app.services.challenge_service import ChallengeService
 from app.services.audit import AuditService
 import math
 
