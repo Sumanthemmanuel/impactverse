@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { I18nProvider } from './i18n.js'
+import { I18nProvider } from './i18n.jsx'
 import Nav from './components/Nav.jsx'
 import LandingPage from './pages/Landing.jsx'
 import SubmissionForm from './pages/citizen/SubmissionForm.jsx'

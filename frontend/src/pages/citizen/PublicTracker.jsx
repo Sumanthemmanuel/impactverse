@@ -4,7 +4,7 @@ import L from 'leaflet'
 import { Link } from 'react-router-dom'
 import { getProblems, DOMAINS, STATUSES, DISTRICTS } from '../../api.js'
 import { Card, Badge, Button } from '../../components/ui/index.js'
-import { useTranslation } from '../../i18n.js'
+import { useTranslation } from '../../i18n.jsx'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useTranslation } from '../i18n.js'
+import { useTranslation } from '../i18n.jsx'
 
 export default function Nav() {
   const { t, lang, setLang } = useTranslation()

@@ -4,7 +4,7 @@ import {
 } from '../../api.js'
 import { Card, CardHeader, Badge, Button } from '../../components/ui/index.js'
 import { Input, FormField } from '../../components/ui/Form.jsx'
-import { useTranslation } from '../../i18n.js'
+import { useTranslation } from '../../i18n.jsx'
 
 // Demo: hardcoded university profile — IIT (ISM) Dhanbad
 const MY_UNIVERSITY = {

@@ -8,7 +8,7 @@ import {
 } from '../../api.js'
 import { Card, CardHeader, Badge, Button } from '../../components/ui/index.js'
 import { Input, FormField } from '../../components/ui/Form.jsx'
-import { useTranslation } from '../../i18n.js'
+import { useTranslation } from '../../i18n.jsx'
 
 const DOMAIN_COLORS = [
   '#6366f1','#14b8a6','#f59e0b','#10b981','#3b82f6',

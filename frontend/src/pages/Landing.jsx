@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from '../i18n.js'
+import { useTranslation } from '../i18n.jsx'
 import { Button } from '../components/ui/index.js'
 
 const DOMAINS = [
