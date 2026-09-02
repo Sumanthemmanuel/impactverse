@@ -204,6 +204,277 @@ class JharkhandGeoValidator:
 
 
 # ---------------------------------------------------------------------------
+# Stage 0b: Location text ↔ GPS cross-verification
+# ---------------------------------------------------------------------------
+
+class LocationVerifier:
+    """
+    Extracts location names from the complaint text, resolves them to known
+    Jharkhand districts (or flags them as outside Jharkhand), then compares
+    against the GPS coordinates supplied by the submitter.
+
+    Verdict:
+      "match"         — text location matches the GPS district (trustworthy)
+      "mismatch"      — text says one place, GPS says another (suspicious)
+      "gps_outside"   — GPS is outside Jharkhand but text mentions a JH place
+      "text_outside"  — text mentions a non-JH place, GPS may be inside/outside
+      "unverifiable"  — no recognisable place name found in text
+    """
+
+    # Canonical district name → aliases that appear in complaint text
+    # Keys are the exact names used in JharkhandGeoValidator.DISTRICT_CENTERS
+    DISTRICT_ALIASES: dict[str, list[str]] = {
+        "Ranchi":                      ["ranchi"],
+        "Jamshedpur (East Singhbhum)": ["jamshedpur", "east singhbhum", "singhbhum"],
+        "Dhanbad":                     ["dhanbad"],
+        "Bokaro":                      ["bokaro", "bokaro steel city", "bsl"],
+        "Hazaribagh":                  ["hazaribagh", "hazribagh"],
+        "Deoghar":                     ["deoghar", "devghar", "baidyanath"],
+        "Giridih":                     ["giridih"],
+        "Dumka":                       ["dumka"],
+        "Palamu":                      ["palamu", "daltonganj", "medininagar"],
+        "Garhwa":                      ["garhwa"],
+        "Chatra":                      ["chatra"],
+        "Koderma":                     ["koderma"],
+        "Ramgarh":                     ["ramgarh"],
+        "Godda":                       ["godda"],
+        "Sahebganj":                   ["sahebganj", "sahibganj"],
+        "Pakur":                       ["pakur"],
+        "Jamtara":                     ["jamtara"],
+        "Latehar":                     ["latehar"],
+        "Lohardaga":                   ["lohardaga"],
+        "Gumla":                       ["gumla"],
+        "Simdega":                     ["simdega"],
+        "West Singhbhum":              ["west singhbhum", "chaibasa"],
+        "Seraikela-Kharsawan":         ["seraikela", "kharsawan", "seraikela-kharsawan"],
+        "Khunti":                      ["khunti"],
+    }
+
+    # Well-known places that are clearly NOT in Jharkhand
+    OUTSIDE_JH_PLACES: list[str] = [
+        "delhi", "new delhi", "mumbai", "bombay", "kolkata", "calcutta",
+        "bangalore", "bengaluru", "hyderabad", "chennai", "madras",
+        "pune", "ahmedabad", "surat", "jaipur", "lucknow", "kanpur",
+        "nagpur", "patna", "bhopal", "indore", "vadodara", "coimbatore",
+        "visakhapatnam", "vizag", "guwahati", "chandigarh", "amritsar",
+        "ludhiana", "agra", "varanasi", "meerut", "allahabad", "prayagraj",
+        "noida", "gurgaon", "gurugram", "faridabad", "thane", "navi mumbai",
+        "kerala", "tamil nadu", "karnataka", "rajasthan", "gujarat",
+        "maharashtra", "uttar pradesh", "up", "madhya pradesh", "mp",
+        "punjab", "haryana", "assam", "odisha", "orissa", "west bengal",
+        "bihar", "chhattisgarh", "uttarakhand", "himachal", "goa",
+    ]
+
+    # How close (km) GPS must be to the mentioned district centre to "match"
+    MATCH_RADIUS_KM: float = 60.0
+
+    def __init__(self, district_centers: dict[str, tuple[float, float]]):
+        self._centers = district_centers
+
+        # Build a flat alias → canonical_district lookup (lowercase)
+        self._alias_map: dict[str, str] = {}
+        for canonical, aliases in self.DISTRICT_ALIASES.items():
+            for alias in aliases:
+                self._alias_map[alias.lower()] = canonical
+
+        # Build one regex that matches any alias (longest-first to avoid
+        # partial matches, e.g. "east singhbhum" before "singhbhum")
+        sorted_aliases = sorted(self._alias_map.keys(), key=len, reverse=True)
+        self._jh_pattern = re.compile(
+            r"\b(" + "|".join(re.escape(a) for a in sorted_aliases) + r")\b",
+            re.IGNORECASE,
+        )
+        self._outside_pattern = re.compile(
+            r"\b(" + "|".join(re.escape(p) for p in self.OUTSIDE_JH_PLACES) + r")\b",
+            re.IGNORECASE,
+        )
+
+    def verify(
+        self,
+        text: str,
+        lat: Optional[float],
+        lng: Optional[float],
+        geo_result: dict,
+    ) -> dict:
+        """
+        Returns a location_verification dict:
+          location_match   : bool | None  (None = unverifiable)
+          verdict          : "match" | "mismatch" | "gps_outside" |
+                             "text_outside" | "unverifiable"
+          text_locations   : list[str]    — JH district names found in text
+          outside_mentions : list[str]    — non-JH place names found in text
+          gps_district     : str | None   — district nearest to GPS coords
+          distance_km      : float | None — GPS→text-district distance
+          explanation      : str          — human-readable verdict
+        """
+        text_lower = text.lower()
+
+        # 1. Extract Jharkhand district names from text
+        jh_matches = self._jh_pattern.findall(text_lower)
+        jh_districts = list(dict.fromkeys(          # deduplicate, preserve order
+            self._alias_map[m.lower()] for m in jh_matches
+        ))
+
+        # 2. Extract non-JH place mentions from text
+        outside_matches = self._outside_pattern.findall(text_lower)
+        outside_places = list(dict.fromkeys(m.lower() for m in outside_matches))
+
+        gps_district = geo_result.get("district_hint")          # set when in JH
+        in_jharkhand = geo_result.get("in_jharkhand", False)
+
+        # ── Case A: No place names found anywhere in text ──────────────────
+        if not jh_districts and not outside_places:
+            return self._result(
+                match=None, verdict="unverifiable",
+                text_locations=[], outside_mentions=[],
+                gps_district=gps_district, distance_km=None,
+                explanation=(
+                    "No recognisable place name found in complaint text. "
+                    "Cannot verify whether GPS coordinates match the report."
+                ),
+            )
+
+        # ── Case B: Text explicitly mentions a non-JH place ────────────────
+        if outside_places and not jh_districts:
+            if in_jharkhand:
+                explanation = (
+                    f"Text mentions '{outside_places[0]}' which is outside Jharkhand, "
+                    f"but GPS coordinates point to {gps_district or 'a location inside Jharkhand'}. "
+                    "Location MISMATCH — GPS and text disagree."
+                )
+                return self._result(
+                    match=False, verdict="mismatch",
+                    text_locations=[], outside_mentions=outside_places,
+                    gps_district=gps_district, distance_km=None,
+                    explanation=explanation,
+                )
+            else:
+                explanation = (
+                    f"Text mentions '{outside_places[0]}' which is outside Jharkhand, "
+                    "and GPS coordinates are also outside Jharkhand. "
+                    "This report is not from Jharkhand."
+                )
+                return self._result(
+                    match=False, verdict="text_outside",
+                    text_locations=[], outside_mentions=outside_places,
+                    gps_district=gps_district, distance_km=None,
+                    explanation=explanation,
+                )
+
+        # ── Case C: Text mentions a JH district ────────────────────────────
+        if jh_districts:
+            # GPS is outside Jharkhand
+            if not in_jharkhand:
+                if lat is None or lng is None:
+                    explanation = (
+                        f"Text mentions '{jh_districts[0]}' (Jharkhand), "
+                        "but no GPS coordinates were provided. Cannot verify."
+                    )
+                    return self._result(
+                        match=None, verdict="unverifiable",
+                        text_locations=jh_districts, outside_mentions=outside_places,
+                        gps_district=None, distance_km=None,
+                        explanation=explanation,
+                    )
+                explanation = (
+                    f"Text mentions '{jh_districts[0]}' (Jharkhand), "
+                    f"but GPS coordinates (lat={lat:.4f}, lng={lng:.4f}) are "
+                    "OUTSIDE Jharkhand. Location MISMATCH — coordinates do not "
+                    "match the place mentioned in the report."
+                )
+                return self._result(
+                    match=False, verdict="gps_outside",
+                    text_locations=jh_districts, outside_mentions=outside_places,
+                    gps_district=None, distance_km=None,
+                    explanation=explanation,
+                )
+
+            # GPS is inside Jharkhand — check if GPS district ≈ text district
+            text_district = jh_districts[0]
+            dist_coords = self._centers.get(text_district)
+
+            if dist_coords and lat is not None and lng is not None:
+                distance_km = round(haversine_km(lat, lng, dist_coords[0], dist_coords[1]), 1)
+                if distance_km <= self.MATCH_RADIUS_KM:
+                    explanation = (
+                        f"Text mentions '{text_district}' and GPS coordinates are "
+                        f"{distance_km} km from its centre — within the {self.MATCH_RADIUS_KM} km "
+                        "match radius. Location VERIFIED ✓"
+                    )
+                    return self._result(
+                        match=True, verdict="match",
+                        text_locations=jh_districts, outside_mentions=outside_places,
+                        gps_district=gps_district, distance_km=distance_km,
+                        explanation=explanation,
+                    )
+                else:
+                    explanation = (
+                        f"Text mentions '{text_district}' but GPS coordinates are "
+                        f"{distance_km} km away (nearest district by GPS: "
+                        f"'{gps_district}'). Distance exceeds {self.MATCH_RADIUS_KM} km "
+                        "match radius — Location MISMATCH."
+                    )
+                    return self._result(
+                        match=False, verdict="mismatch",
+                        text_locations=jh_districts, outside_mentions=outside_places,
+                        gps_district=gps_district, distance_km=distance_km,
+                        explanation=explanation,
+                    )
+
+            # Mentioned district not in our centre table, or no coords — fall
+            # back to comparing the GPS district_hint name
+            if gps_district and text_district:
+                # Normalise: strip parenthetical suffixes for comparison
+                gps_base = gps_district.split("(")[0].strip().lower()
+                txt_base = text_district.split("(")[0].strip().lower()
+                if gps_base == txt_base or gps_base in txt_base or txt_base in gps_base:
+                    explanation = (
+                        f"Text mentions '{text_district}' and GPS district is "
+                        f"'{gps_district}' — names match. Location VERIFIED ✓"
+                    )
+                    return self._result(
+                        match=True, verdict="match",
+                        text_locations=jh_districts, outside_mentions=outside_places,
+                        gps_district=gps_district, distance_km=None,
+                        explanation=explanation,
+                    )
+                else:
+                    explanation = (
+                        f"Text mentions '{text_district}' but GPS points to "
+                        f"'{gps_district}'. Location MISMATCH."
+                    )
+                    return self._result(
+                        match=False, verdict="mismatch",
+                        text_locations=jh_districts, outside_mentions=outside_places,
+                        gps_district=gps_district, distance_km=None,
+                        explanation=explanation,
+                    )
+
+        # Fallback — shouldn't reach here
+        return self._result(
+            match=None, verdict="unverifiable",
+            text_locations=jh_districts, outside_mentions=outside_places,
+            gps_district=gps_district, distance_km=None,
+            explanation="Could not determine location match.",
+        )
+
+    @staticmethod
+    def _result(
+        match, verdict, text_locations, outside_mentions,
+        gps_district, distance_km, explanation
+    ) -> dict:
+        return {
+            "location_match":    match,
+            "verdict":           verdict,
+            "text_locations":    text_locations,
+            "outside_mentions":  outside_mentions,
+            "gps_district":      gps_district,
+            "distance_km":       distance_km,
+            "explanation":       explanation,
+        }
+
+
+# ---------------------------------------------------------------------------
 # Stage 1: Spam / authenticity filter
 # ---------------------------------------------------------------------------
 
@@ -691,6 +962,7 @@ class ComplaintPipeline:
         fairness_cfg = load_config("fairness_config.json")
 
         self.geo_validator = JharkhandGeoValidator()
+        self.location_verifier = LocationVerifier(JharkhandGeoValidator.DISTRICT_CENTERS)
         self.spam_filter = SpamFilter()
         self.domain_classifier = DomainClassifier(domains_cfg)
         self.deduplicator = Deduplicator()
@@ -707,8 +979,13 @@ class ComplaintPipeline:
         complaint_id = str(uuid.uuid4())
         competing_priorities = competing_priorities or []
 
-        # 0. Geo validation (non-blocking — adds context, doesn't reject).
+        # 0. Geo validation (bounding-box check + nearest district).
         geo_result = self.geo_validator.validate(complaint.lat, complaint.lng)
+
+        # 0b. Location cross-verification: does the text location match GPS?
+        location_verification = self.location_verifier.verify(
+            complaint.complaint_text, complaint.lat, complaint.lng, geo_result
+        )
 
         # 1. Spam filter — short-circuit early.
         spam_result = self.spam_filter.check(complaint)
@@ -718,6 +995,7 @@ class ComplaintPipeline:
                 "is_spam": True,
                 "spam_confidence": spam_result["spam_confidence"],
                 "geo_validation": geo_result,
+                "location_verification": location_verification,
                 "domain": None,
                 "confidence": 0.0,
                 "method": self.domain_classifier.method,
@@ -779,6 +1057,7 @@ class ComplaintPipeline:
             "is_spam": False,
             "spam_confidence": spam_result["spam_confidence"],
             "geo_validation": geo_result,
+            "location_verification": location_verification,
             "domain": domain_result["domain"],
             "confidence": domain_result["confidence"],
             "method": domain_result["method"],
@@ -862,7 +1141,7 @@ try:
         )
         full_result = _pipeline.process(complaint)
 
-        # Return ONLY the fields the backend expects
+        # Return core fields + location_verification (always included now)
         return {
             "domain": full_result["domain"],
             "confidence": full_result["confidence"],
@@ -872,6 +1151,7 @@ try:
             "duplicate_count": full_result["duplicate_count"],
             "priority_score": full_result["priority_score"],
             "severity_boost": full_result["severity_boost"],
+            "location_verification": full_result["location_verification"],
         }
 
     @app.post("/classify/full")
