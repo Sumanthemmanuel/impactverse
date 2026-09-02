@@ -1,0 +1,35 @@
+{
+  "capabilities": [
+    {"domain": "Education", "capability": "Dept of School Education & Literacy, Jharkhand", "capacity": 40, "current_load": 8},
+    {"domain": "Education", "capability": "Jharkhand State University Outreach Cell", "capacity": 25, "current_load": 5},
+    {"domain": "Agriculture", "capability": "Dept of Agriculture, Animal Husbandry & Co-operative, Jharkhand", "capacity": 50, "current_load": 15},
+    {"domain": "Agriculture", "capability": "Birsa Agricultural University Extension Services", "capacity": 30, "current_load": 10},
+    {"domain": "Healthcare", "capability": "Dept of Health, Medical Education & Family Welfare, Jharkhand", "capacity": 45, "current_load": 20},
+    {"domain": "Healthcare", "capability": "National Health Mission – Jharkhand", "capacity": 35, "current_load": 12},
+    {"domain": "Water Resources", "capability": "Drinking Water & Sanitation Dept, Jharkhand", "capacity": 40, "current_load": 10},
+    {"domain": "Water Resources", "capability": "Jharkhand State Water Board", "capacity": 30, "current_load": 8},
+    {"domain": "Environment", "capability": "Jharkhand State Pollution Control Board", "capacity": 25, "current_load": 9},
+    {"domain": "Environment", "capability": "Dept of Forest, Environment & Climate Change, Jharkhand", "capacity": 30, "current_load": 7},
+    {"domain": "Energy", "capability": "Jharkhand Bijli Vitran Nigam Ltd (JBVNL)", "capacity": 50, "current_load": 30},
+    {"domain": "Energy", "capability": "Jharkhand Renewable Energy Development Agency", "capacity": 20, "current_load": 4},
+    {"domain": "Urban Development", "capability": "Urban Development & Housing Dept, Jharkhand", "capacity": 45, "current_load": 18},
+    {"domain": "Urban Development", "capability": "Ranchi Municipal Corporation", "capacity": 35, "current_load": 22},
+    {"domain": "Accessibility", "capability": "Dept of Social Welfare, Women & Child Development, Jharkhand", "capacity": 20, "current_load": 3},
+    {"domain": "Public Administration", "capability": "General Administration Dept, Jharkhand", "capacity": 40, "current_load": 15},
+    {"domain": "Public Administration", "capability": "District Collectorate Grievance Cell", "capacity": 50, "current_load": 25},
+    {"domain": "Rural Livelihoods", "capability": "Jharkhand State Livelihood Promotion Society (JSLPS)", "capacity": 40, "current_load": 12},
+    {"domain": "Rural Livelihoods", "capability": "MGNREGA Cell, Rural Development Dept, Jharkhand", "capacity": 35, "current_load": 14}
+  ],
+  "partner_categories": {
+    "Education": ["edtech companies", "education-focused NGOs", "university outreach programs", "CSR education initiatives"],
+    "Agriculture": ["agritech startups", "ICAR research stations", "farmer producer organizations", "microfinance institutions"],
+    "Healthcare": ["healthcare NGOs", "medical supply chain companies", "telemedicine providers", "public health research institutes"],
+    "Water Resources": ["water treatment technology firms", "civil/hydraulic engineering firms", "WASH-focused NGOs", "IoT water monitoring startups"],
+    "Environment": ["environmental consultancies", "climate NGOs", "sustainability startups", "mining rehabilitation firms"],
+    "Energy": ["power infrastructure companies", "renewable energy startups", "solar panel manufacturers", "rural electrification NGOs"],
+    "Urban Development": ["civil engineering firms", "urban planning consultancies", "smart city solution providers", "waste management companies"],
+    "Accessibility": ["assistive technology companies", "disability rights NGOs", "inclusive design consultancies"],
+    "Public Administration": ["civic-tech companies", "transparency/accountability NGOs", "e-governance solution providers"],
+    "Rural Livelihoods": ["microfinance institutions", "skill development organizations", "fair trade networks", "tribal welfare NGOs"]
+  }
+}

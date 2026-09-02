@@ -1,0 +1,18 @@
+{
+  "critical": {
+    "boost": 10.0,
+    "keywords": ["fire", "collapse", "explosion", "flooding", "electrocution", "death", "dead", "drowning", "life-threatening", "gas leak", "mining accident", "landslide", "stampede", "epidemic", "starvation", "child trafficking"]
+  },
+  "high": {
+    "boost": 6.0,
+    "keywords": ["injury", "injured", "outbreak", "contaminated", "unsafe structure", "exposed wire", "no water supply", "power outage", "displacement", "eviction", "bonded labour", "snake bite", "malaria", "encephalitis", "silicosis", "hunger", "famine"]
+  },
+  "medium": {
+    "boost": 3.0,
+    "keywords": ["overflow", "blockage", "delay", "shortage", "leak", "damaged", "broken", "failed", "irregular", "corruption", "unpaid wages", "crop failure", "drought", "waterlogging", "pest attack"]
+  },
+  "low": {
+    "boost": 1.0,
+    "keywords": ["dirty", "noise", "minor", "inconvenience", "litter", "slow", "queue", "waiting", "unclear", "confusing", "overcrowded"]
+  }
+}

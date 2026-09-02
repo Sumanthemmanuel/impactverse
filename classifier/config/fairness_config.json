@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "tracking_window_hours": 24,
+  "priority_tie_threshold": 1.5,
+  "max_share_per_source_pct": 30,
+  "rebalance_strategy": "round_robin_within_tie_band",
+  "protected_source_field": "institution_id",
+  "notes": "When multiple complaints fall within priority_tie_threshold of each other and compete for the same capability slot, sources exceeding max_share_per_source_pct of recent allocations within tracking_window_hours are deprioritized in favor of round-robin ordering across distinct institution_ids."
+}

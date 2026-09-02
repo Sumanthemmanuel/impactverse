@@ -1,0 +1,64 @@
+{
+  "domains": [
+    {
+      "name": "Education",
+      "description": "School infrastructure issues, teacher shortages, missing educational facilities, scholarship disbursement delays, exam irregularities, mid-day meal problems, digital literacy gaps, library and lab deficiencies in Jharkhand",
+      "criticality_weight": 2.5,
+      "keywords": ["school", "college", "teacher", "scholarship", "exam", "classroom", "university", "student", "education", "library", "lab", "mid-day meal", "dropout", "literacy", "hostel", "tuition"]
+    },
+    {
+      "name": "Agriculture",
+      "description": "Crop damage, irrigation failures, fertilizer shortages, farmer loan issues, drought impact, pest infestations, seed quality complaints, MSP disputes, cold storage needs, agricultural extension services in rural Jharkhand",
+      "criticality_weight": 3.5,
+      "keywords": ["crop", "irrigation", "fertilizer", "farmer", "drought", "pest", "seed", "harvest", "soil", "agriculture", "tractor", "farming", "cultivation", "paddy", "monsoon", "market price", "mandi", "loan waiver"]
+    },
+    {
+      "name": "Healthcare",
+      "description": "Hospital service failures, clinic shortages, medicine unavailability, ambulance delays, disease outbreaks, maternal health issues, malnutrition, immunization gaps, sanitation-related diseases in Jharkhand tribal and rural areas",
+      "criticality_weight": 4.5,
+      "keywords": ["hospital", "clinic", "medicine", "ambulance", "outbreak", "doctor", "health", "disease", "vaccination", "malaria", "dengue", "malnutrition", "maternal", "anganwadi", "PHC", "CHC", "patient", "fever", "diarrhea"]
+    },
+    {
+      "name": "Water Resources",
+      "description": "Drinking water shortage, pipeline leakage, contaminated water, handpump failures, borewell issues, water tanker delays, dam and reservoir management, watershed problems, groundwater depletion in Jharkhand",
+      "criticality_weight": 4.0,
+      "keywords": ["water", "pipeline", "leak", "contaminated", "tanker", "shortage", "borewell", "handpump", "drinking water", "well", "dam", "reservoir", "groundwater", "fluoride", "arsenic", "purification", "supply"]
+    },
+    {
+      "name": "Environment",
+      "description": "Air pollution from mining and industry, deforestation, illegal mining, water body contamination, waste dumping, biodiversity loss, noise pollution, forest fire, soil erosion in Jharkhand's ecologically sensitive zones",
+      "criticality_weight": 3.0,
+      "keywords": ["pollution", "mining", "deforestation", "forest", "waste", "dumping", "air quality", "smoke", "noise", "erosion", "biodiversity", "wildlife", "river", "contamination", "illegal mining", "coal", "tree"]
+    },
+    {
+      "name": "Energy",
+      "description": "Power outages, transformer failures, exposed wiring, solar panel issues, electrification gaps in remote villages, voltage fluctuations, electricity billing disputes, renewable energy project delays in Jharkhand",
+      "criticality_weight": 3.5,
+      "keywords": ["power", "electricity", "transformer", "wiring", "outage", "voltage", "solar", "energy", "electrification", "meter", "billing", "grid", "power cut", "generator", "wire", "electric shock"]
+    },
+    {
+      "name": "Urban Development",
+      "description": "Road potholes, broken streetlights, footpath encroachment, illegal construction, drainage overflow, sewage problems, public toilet shortages, municipal service failures, housing issues in Jharkhand towns and cities",
+      "criticality_weight": 2.5,
+      "keywords": ["pothole", "road", "streetlight", "drainage", "sewage", "garbage", "construction", "encroachment", "footpath", "housing", "municipal", "bridge", "flyover", "pavement", "parking", "traffic", "sanitation"]
+    },
+    {
+      "name": "Accessibility",
+      "description": "Disability access barriers, lack of ramps and assistive infrastructure, public transport inaccessibility, digital accessibility gaps, inclusive education deficiencies, sign language interpreter shortages in Jharkhand government services",
+      "criticality_weight": 2.0,
+      "keywords": ["disability", "wheelchair", "ramp", "accessible", "blind", "deaf", "assistive", "inclusive", "barrier", "mobility", "sign language", "braille", "handicap", "special needs", "accessibility"]
+    },
+    {
+      "name": "Public Administration",
+      "description": "Corruption, delayed government services, certificate and document processing delays, unresponsive officials, ration card issues, Aadhaar linking problems, pension delays, land record disputes, RTI non-compliance in Jharkhand",
+      "criticality_weight": 2.0,
+      "keywords": ["corruption", "bribe", "certificate", "government", "official", "delay", "ration card", "aadhaar", "pension", "land record", "BPL", "caste certificate", "domicile", "RTI", "complaint", "office", "license"]
+    },
+    {
+      "name": "Rural Livelihoods",
+      "description": "MGNREGA payment delays, self-help group issues, tribal livelihood challenges, forest rights disputes, handicraft market access, skill development gaps, migration distress, cooperative society failures in Jharkhand's tribal belt",
+      "criticality_weight": 3.0,
+      "keywords": ["MGNREGA", "livelihood", "tribal", "self-help group", "SHG", "handicraft", "skill", "migration", "forest rights", "cooperative", "wages", "employment", "poverty", "income", "training", "artisan", "NTFP"]
+    }
+  ]
+}
