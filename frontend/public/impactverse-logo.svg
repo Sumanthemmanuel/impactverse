@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Outer ring -->
+  <circle cx="24" cy="24" r="22" stroke="#34d399" stroke-width="2.5" opacity="0.6"/>
+  <!-- Globe grid lines -->
+  <ellipse cx="24" cy="24" rx="10" ry="22" stroke="#34d399" stroke-width="1.5" opacity="0.4"/>
+  <line x1="2" y1="24" x2="46" y2="24" stroke="#34d399" stroke-width="1.5" opacity="0.4"/>
+  <path d="M7 14 Q24 20 41 14" stroke="#34d399" stroke-width="1.2" opacity="0.35" fill="none"/>
+  <path d="M7 34 Q24 28 41 34" stroke="#34d399" stroke-width="1.2" opacity="0.35" fill="none"/>
+  <!-- Impact pulse dot -->
+  <circle cx="24" cy="24" r="5" fill="#10b981"/>
+  <circle cx="24" cy="24" r="8" stroke="#10b981" stroke-width="1.5" opacity="0.4"/>
+  <!-- Rising arrow -->
+  <path d="M24 20 L28 27 H25.5 V32 H22.5 V27 H20 Z" fill="white" opacity="0.95"/>
+</svg>

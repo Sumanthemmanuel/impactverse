@@ -29,8 +29,8 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body className={inter.className}>
         <Navbar />
-        <main>{children}</main>
-        {/* We'll add Footer here later */}
+        {/* Navbar component renders its own spacer div — no extra padding needed */}
+        <main style={{ minHeight: "100vh" }}>{children}</main>
       </body>
     </html>
   );
