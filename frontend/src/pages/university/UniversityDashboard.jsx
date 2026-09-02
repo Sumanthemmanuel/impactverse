@@ -9,7 +9,7 @@ import { useTranslation } from '../../i18n.jsx'
 // Demo: hardcoded university profile — IIT (ISM) Dhanbad
 const MY_UNIVERSITY = {
   id: 'U001',
-  domains: ['Environment', 'Energy', 'Water Resources'],
+  domains: ['Environment', 'Sanitation', 'Water Management'],
 }
 
 // ── Problem card ──────────────────────────────────────────────────────────────

@@ -23,7 +23,7 @@ const MOCK_PROBLEMS = [
     description: 'The borewell water has turned brownish and several families report stomach illness after drinking it.',
     domain: 'Water Resources',
     priority_score: 8.5,
-    status: 'new',
+    status: 'Submitted',
     duplicate_count: 4,
     lat: 23.3441,
     lng: 85.3096,
@@ -36,7 +36,7 @@ const MOCK_PROBLEMS = [
     description: 'Heavy rains caused partial roof collapse in 3 classrooms. Children attending classes in the open.',
     domain: 'Education',
     priority_score: 9.0,
-    status: 'in-progress',
+    status: 'In Progress',
     duplicate_count: 1,
     lat: 23.6693,
     lng: 85.9924,
@@ -62,7 +62,7 @@ const MOCK_PROBLEMS = [
     description: 'Entire stretch of NH-33 bypass in Ward 12 is dark at night. Two accidents reported last month.',
     domain: 'Urban Development',
     priority_score: 5.0,
-    status: 'resolved',
+    status: 'Resolved',
     duplicate_count: 2,
     lat: 23.3560,
     lng: 85.3340,
@@ -75,7 +75,7 @@ const MOCK_PROBLEMS = [
     description: 'A factory is reportedly dumping chemical waste near the river bank at night, killing fish and damaging crops.',
     domain: 'Environment',
     priority_score: 9.5,
-    status: 'in-progress',
+    status: 'In Progress',
     duplicate_count: 6,
     lat: 22.7533,
     lng: 85.8074,
@@ -84,11 +84,11 @@ const MOCK_PROBLEMS = [
   },
   {
     id: 'P006',
-    title: 'Power cuts lasting 12+ hours daily in Pakur block',
-    description: 'Residents face severe power cuts affecting irrigation pumps, refrigeration, and home lighting.',
-    domain: 'Energy',
+    title: 'Community sanitation facility needs urgent repair in Pakur block',
+    description: 'The facility has no running water and broken drainage, affecting nearby homes and schoolchildren.',
+    domain: 'Water Resources',
     priority_score: 6.5,
-    status: 'new',
+    status: 'Submitted',
     duplicate_count: 8,
     lat: 24.6361,
     lng: 87.8427,
@@ -101,7 +101,7 @@ const MOCK_PROBLEMS = [
     description: 'A 40-member tribal weaving cooperative produces quality Tussar silk but has no platform to sell beyond local haats.',
     domain: 'Rural Livelihoods',
     priority_score: 4.5,
-    status: 'new',
+    status: 'Submitted',
     duplicate_count: 1,
     lat: 23.7580,
     lng: 84.9040,
@@ -114,7 +114,7 @@ const MOCK_PROBLEMS = [
     description: 'Multiple families report BPL cards not renewed despite repeated visits. Officials demand informal fees.',
     domain: 'Public Administration',
     priority_score: 5.5,
-    status: 'duplicate',
+    status: 'Submitted',
     duplicate_count: 5,
     lat: 23.6650,
     lng: 85.4500,
@@ -128,14 +128,14 @@ const MOCK_STATS = {
   universities_engaged: 8,
   industries_engaged: 14,
   by_domain: {
-    'Water Resources': 28,
+    'Water Management': 28,
     'Education': 22,
     'Healthcare': 19,
     'Environment': 17,
-    'Urban Development': 12,
-    'Energy': 10,
+    'Urban Infrastructure': 12,
+    'Sanitation': 10,
     'Rural Livelihoods': 8,
-    'Public Administration': 5,
+    'Public Service Delivery': 5,
     'Agriculture': 4,
     'Accessibility': 2,
   },
@@ -158,9 +158,9 @@ const MOCK_STATS = {
 }
 
 const MOCK_UNIVERSITIES = [
-  { id: 'U001', name: 'IIT (ISM) Dhanbad', domains: ['Environment', 'Energy', 'Water Resources'] },
-  { id: 'U002', name: 'BIT Mesra', domains: ['Urban Development', 'Accessibility', 'Energy'] },
-  { id: 'U003', name: 'Ranchi University', domains: ['Education', 'Public Administration', 'Rural Livelihoods'] },
+  { id: 'U001', name: 'IIT (ISM) Dhanbad', domains: ['Environment', 'Sanitation', 'Water Management'] },
+  { id: 'U002', name: 'BIT Mesra', domains: ['Urban Infrastructure', 'Accessibility', 'Sanitation'] },
+  { id: 'U003', name: 'Ranchi University', domains: ['Education', 'Public Service Delivery', 'Rural Livelihoods'] },
   { id: 'U004', name: 'Birsa Agricultural University', domains: ['Agriculture', 'Rural Livelihoods'] },
 ]
 
@@ -189,7 +189,7 @@ export async function submitProblem(body) {
       ...body,
       domain: 'Public Administration', // classifier assigns real domain
       priority_score: 2.0,
-      status: 'new',
+      status: 'Submitted',
       duplicate_count: 1,
       district: body.district ?? 'Unknown',
     }
@@ -344,7 +344,7 @@ export const DOMAINS = [
   'Rural Livelihoods',
 ]
 
-export const STATUSES = ['new', 'in-progress', 'resolved', 'duplicate']
+export const STATUSES = ['Submitted', 'Assigned to University', 'In Progress', 'Resolved']
 
 export const DISTRICTS = [
   'Ranchi', 'Dhanbad', 'Hazaribagh', 'Seraikela', 'Chatra',

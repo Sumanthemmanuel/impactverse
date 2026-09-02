@@ -22,9 +22,9 @@ function MapClickHandler({ onPin }) {
 // ── Domains translated ────────────────────────────────────────────────────────
 const DOMAIN_HI = {
   'Education': 'शिक्षा', 'Agriculture': 'कृषि', 'Healthcare': 'स्वास्थ्य',
-  'Water Resources': 'जल संसाधन', 'Environment': 'पर्यावरण', 'Energy': 'ऊर्जा',
-  'Urban Development': 'शहरी विकास', 'Accessibility': 'पहुँच',
-  'Public Administration': 'लोक प्रशासन', 'Rural Livelihoods': 'ग्रामीण आजीविका',
+  'Water Management': 'जल प्रबंधन', 'Environment': 'पर्यावरण', 'Sanitation': 'स्वच्छता',
+  'Urban Infrastructure': 'शहरी बुनियादी ढाँचा', 'Accessibility': 'सुगम्यता',
+  'Public Service Delivery': 'लोक सेवा वितरण', 'Rural Livelihoods': 'ग्रामीण आजीविका',
 }
 
 // ── Success State ─────────────────────────────────────────────────────────────

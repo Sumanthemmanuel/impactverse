@@ -7,64 +7,148 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── ImpactVerse shared brand palette ──────────────────────────────
-        // Primary — deep indigo used for CTAs, active nav, key headings
         primary: {
-          50:  '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',   // ← base brand colour
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
+          50:  '#f2f7f3',
+          100: '#dceadf',
+          200: '#b8d4bf',
+          300: '#86b494',
+          400: '#568f68',
+          500: '#2f6d45',
+          600: '#1e5a37',
+          700: '#16482c',
+          800: '#0f3a24',
+          900: '#0a2819',
+          950: '#05140c',
         },
-        // Accent — teal, used for map pins, tracker badges, success states
+        gold: {
+          50:  '#fbf6e8',
+          100: '#f4e7c1',
+          200: '#e9d089',
+          300: '#dcb54f',
+          400: '#d4a017',
+          500: '#c49012',
+          600: '#a6740c',
+          700: '#7d560e',
+          800: '#5c4012',
+          900: '#3d2b0c',
+        },
+        clay: {
+          50:  '#fbf4ee',
+          100: '#f3e4d4',
+          400: '#d4783a',
+          500: '#c45c26',
+          600: '#a4491c',
+        },
+        ivory: {
+          DEFAULT: '#f6f1e8',
+          deep:    '#efe8d9',
+          card:    '#fffdf8',
+        },
+        forest: {
+          DEFAULT: '#0c2418',
+          mid:     '#123326',
+          deep:    '#071510',
+        },
         accent: {
-          50:  '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',   // ← base accent
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+          50:  '#fff8e8',
+          100: '#feefc7',
+          200: '#fcdfa0',
+          300: '#f9c968',
+          400: '#d4a017',
+          500: '#c49012',
+          600: '#a6740c',
+          700: '#7d560e',
+          800: '#5c4012',
+          900: '#3d2b0c',
         },
-        // Status colours — shared across /citizen, /university, /admin
-        status: {
-          new:         '#6366f1',   // indigo
-          'in-progress': '#f59e0b', // amber
-          resolved:    '#10b981',   // emerald
-          duplicate:   '#6b7280',   // gray
-        },
-        // Surface tokens — keeps cards off pure white
         surface: {
-          DEFAULT: '#f8fafc',
-          card:    '#ffffff',
-          border:  '#e2e8f0',
-          muted:   '#f1f5f9',
+          DEFAULT: '#f6f1e8',
+          card:    '#fffdf8',
+          border:  '#e4dccb',
+          muted:   '#efe8d9',
         },
-        // Text tokens
         ink: {
-          DEFAULT: '#0f172a',
-          muted:   '#64748b',
-          subtle:  '#94a3b8',
+          DEFAULT: '#161410',
+          muted:   '#5c574c',
+          subtle:  '#8a8478',
         },
       },
       fontFamily: {
-        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
+        serif: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
+        body: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         xl:  '0.875rem',
         '2xl': '1.25rem',
+        '3xl': '1.75rem',
       },
       boxShadow: {
-        card:  '0 1px 3px 0 rgb(0 0 0 / .07), 0 1px 2px -1px rgb(0 0 0 / .05)',
-        'card-hover': '0 4px 12px -2px rgb(0 0 0 / .10), 0 2px 6px -2px rgb(0 0 0 / .06)',
+        'glass': '0 8px 32px rgba(12, 36, 24, 0.08)',
+        'glass-lg': '0 16px 48px rgba(12, 36, 24, 0.12)',
+        'glass-xl': '0 24px 64px rgba(12, 36, 24, 0.16)',
+        'float': '0 24px 60px -18px rgba(12, 36, 24, 0.35)',
+        'card': '0 1px 2px rgb(22 20 16 / .05), 0 8px 24px -12px rgb(22 20 16 / .12)',
+        'card-hover': '0 20px 50px -16px rgba(12, 36, 24, 0.22)',
+        'gold': '0 10px 30px -8px rgba(196, 144, 18, 0.45)',
+      },
+      letterSpacing: {
+        'widest2': '0.22em',
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'float-slow': 'float 10s ease-in-out infinite',
+        'kenburns': 'kenburns 22s ease-out forwards',
+        'fade-in-up': 'fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'fade-in': 'fadeIn 0.7s ease-out forwards',
+        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+        'marquee': 'marquee 42s linear infinite',
+        'marquee-rev': 'marqueeRev 48s linear infinite',
+        'grain': 'grain 0.5s steps(1) infinite',
+        'line-grow': 'lineGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-18px)' },
+        },
+        kenburns: {
+          '0%': { transform: 'scale(1) translate(0, 0)' },
+          '100%': { transform: 'scale(1.12) translate(-1.5%, -1%)' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(36px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '0.55' },
+          '50%': { opacity: '1' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marqueeRev: {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        grain: {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '10%': { transform: 'translate(-1%, -1%)' },
+          '30%': { transform: 'translate(1%, 0)' },
+          '50%': { transform: 'translate(0, 1%)' },
+          '70%': { transform: 'translate(-1%, 0)' },
+          '90%': { transform: 'translate(1%, 1%)' },
+        },
+        lineGrow: {
+          '0%': { transform: 'scaleX(0)' },
+          '100%': { transform: 'scaleX(1)' },
+        },
       },
     },
   },

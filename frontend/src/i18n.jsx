@@ -12,15 +12,15 @@ import React, { createContext, useContext, useState } from 'react'
 export const translations = {
   en: {
     // ── Nav ────────────────────────────────────────────────────────
-    'nav.brand':       'ImpactVerse',
-    'nav.tagline':     'Citizen · University · Government',
+    'nav.brand':       'SICP',
+    'nav.tagline':     'Societal Innovation & Collaborative Portal',
     'nav.citizen':     'Citizen Portal',
     'nav.university':  'University',
     'nav.admin':       'Admin',
 
     // ── Home / Landing ─────────────────────────────────────────────
-    'home.hero.title':   'Bridging Citizens & Government',
-    'home.hero.sub':     'Report local problems. Track resolutions. Build a better Jharkhand — together.',
+    'home.hero.title':   'Solving real problems. Building a better Jharkhand.',
+    'home.hero.sub':     'One collaborative platform where citizens, universities and public institutions turn local challenges into lasting progress.',
     'home.hero.cta1':    'Report a Problem',
     'home.hero.cta2':    'View Public Tracker',
     'home.stat1.label':  'Problems Reported',
@@ -150,15 +150,15 @@ export const translations = {
 
   hi: {
     // ── Nav ────────────────────────────────────────────────────────
-    'nav.brand':       'इम्पैक्टवर्स',
-    'nav.tagline':     'नागरिक · विश्वविद्यालय · सरकार',
+    'nav.brand':       'SICP',
+    'nav.tagline':     'सामाजिक नवाचार एवं सहयोग पोर्टल',
     'nav.citizen':     'नागरिक पोर्टल',
     'nav.university':  'विश्वविद्यालय',
     'nav.admin':       'प्रशासन',
 
     // ── Home / Landing ─────────────────────────────────────────────
-    'home.hero.title':   'नागरिकों और सरकार के बीच सेतु',
-    'home.hero.sub':     'स्थानीय समस्याएँ रिपोर्ट करें। समाधान ट्रैक करें। मिलकर बेहतर झारखंड बनाएं।',
+    'home.hero.title':   'वास्तविक समस्याओं का समाधान। बेहतर झारखंड का निर्माण।',
+    'home.hero.sub':     'एक सहयोगी मंच जहाँ नागरिक, विश्वविद्यालय और सार्वजनिक संस्थान स्थानीय चुनौतियों को स्थायी प्रगति में बदलते हैं।',
     'home.hero.cta1':    'समस्या रिपोर्ट करें',
     'home.hero.cta2':    'सार्वजनिक ट्रैकर देखें',
     'home.stat1.label':  'समस्याएँ रिपोर्ट हुईं',
