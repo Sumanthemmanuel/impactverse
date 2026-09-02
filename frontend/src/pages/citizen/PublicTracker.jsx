@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { Link } from 'react-router-dom'
 import { getProblems, DOMAINS, STATUSES, DISTRICTS } from '../../api.js'
-import { Card, Badge, Button } from '../ui/index.js'
+import { Card, Badge, Button } from '../../components/ui/index.js'
 import { useTranslation } from '../../i18n.js'
 
 delete L.Icon.Default.prototype._getIconUrl

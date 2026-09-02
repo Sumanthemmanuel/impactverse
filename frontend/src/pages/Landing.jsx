@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from '../../i18n.js'
-import { Button } from '../ui/index.js'
+import { useTranslation } from '../i18n.js'
+import { Button } from '../components/ui/index.js'
 
 const DOMAINS = [
   { icon: '🎓', label: 'Education',          labelHi: 'शिक्षा' },

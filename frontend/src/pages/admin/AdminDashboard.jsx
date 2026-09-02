@@ -6,8 +6,8 @@ import {
 import {
   getDashboardStats, getProblems, postIndustryInterest,
 } from '../../api.js'
-import { Card, CardHeader, Badge, Button } from '../ui/index.js'
-import { Input, FormField } from '../ui/Form.jsx'
+import { Card, CardHeader, Badge, Button } from '../../components/ui/index.js'
+import { Input, FormField } from '../../components/ui/Form.jsx'
 import { useTranslation } from '../../i18n.js'
 
 const DOMAIN_COLORS = [

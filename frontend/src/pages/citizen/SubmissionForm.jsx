@@ -3,8 +3,8 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import { Link } from 'react-router-dom'
 import { submitProblem, reverseGeocode, DOMAINS } from '../../api.js'
-import { Button, Card, CardHeader, Badge } from '../ui/index.js'
-import { Input, Textarea, FormField } from '../ui/Form.jsx'
+import { Button, Card, CardHeader, Badge } from '../../components/ui/index.js'
+import { Input, Textarea, FormField } from '../../components/ui/Form.jsx'
 import { useTranslation } from '../../i18n.js'
 
 delete L.Icon.Default.prototype._getIconUrl
