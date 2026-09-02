@@ -312,31 +312,59 @@ class DomainClassifier:
                 self.method = "keyword"
 
     @staticmethod
-    def _temperature_softmax(scores: np.ndarray, temperature: float = 0.5) -> np.ndarray:
+    def _calibrate_confidence(sims: np.ndarray) -> np.ndarray:
         """
-        Temperature-scaled softmax for confidence calibration.
+        Margin-based confidence calibration.
 
-        Lower temperature = sharper distribution (more decisive).
-        Higher temperature = softer distribution (more uncertain).
+        Problem with temperature-softmax over 10 domains: the winner never
+        exceeds ~0.20 even on obvious complaints because the score is diluted
+        across all 10 buckets. This produces misleadingly low numbers.
 
-        Default 0.5 makes the model more decisive, which is appropriate
-        for a domain classification task with clear category boundaries.
+        Instead we use:
+          1. Min-max normalise the raw cosine similarities to [0, 1].
+          2. Scale by the winner's margin over the runner-up (how decisively
+             it won), clamped to [0.4, 0.97].
+          3. Remaining scores scale proportionally below the winner.
+
+        Result: winner gets 0.60-0.95 on clear cases, 0.40-0.60 on ambiguous
+        ones — a range humans can actually interpret.
         """
-        scaled = scores / temperature
-        shifted = scaled - np.max(scaled)  # numerical stability
-        exp_scores = np.exp(shifted)
-        return exp_scores / exp_scores.sum()
+        sims = np.array(sims, dtype=float)
+        mn, mx = sims.min(), sims.max()
+        if mx - mn < 1e-9:
+            # All identical — genuine uncertainty
+            return np.full(len(sims), 1.0 / len(sims))
+
+        norm = (sims - mn) / (mx - mn)          # scale to [0, 1]
+
+        sorted_norm = np.sort(norm)[::-1]
+        margin = sorted_norm[0] - sorted_norm[1]  # gap between 1st and 2nd
+
+        # Map margin [0, 0.4] → winner confidence [0.40, 0.97]
+        winner_conf = 0.40 + min(margin / 0.4, 1.0) * 0.57
+        winner_conf = min(winner_conf, 0.97)
+
+        # Scale all other scores proportionally in the remaining space
+        winner_idx = int(np.argmax(norm))
+        calibrated = np.zeros(len(norm))
+        calibrated[winner_idx] = winner_conf
+
+        remaining = 1.0 - winner_conf
+        other_sum = norm.sum() - norm[winner_idx]
+        for i in range(len(norm)):
+            if i != winner_idx:
+                calibrated[i] = (norm[i] / other_sum * remaining) if other_sum > 0 else remaining / (len(norm) - 1)
+
+        return calibrated
 
     def _classify_embedding(self, text: str) -> tuple[str, float, list[dict]]:
         """
         Returns (best_domain, calibrated_confidence, top_3_predictions).
-        Top-3 is a bonus for judges showing the model 'thinks' across domains.
         """
         vec = self._model.encode([text], normalize_embeddings=True)
         sims = cosine_similarity(vec, self._domain_embeddings)[0]
 
-        # Apply temperature-scaled softmax for calibrated confidence
-        calibrated = self._temperature_softmax(sims)
+        calibrated = self._calibrate_confidence(sims)
 
         # Sort by calibrated confidence, descending
         ranked_indices = np.argsort(calibrated)[::-1]
