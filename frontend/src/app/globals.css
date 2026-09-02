@@ -7,6 +7,7 @@
   --surface:         #ffffff;
   --surface-hover:   #f1f5f9;
   --surface-border:  #e2e8f0;
+  --surface-dark:    rgba(6, 78, 59, 0.06);
 
   /* Text */
   --text-primary:    #0f172a;
@@ -19,15 +20,18 @@
   --primary-light:   #d1fae5;
   --primary-glow:    0 4px 14px rgba(16, 185, 129, 0.35);
 
+  /* Hero Gradient */
+  --grad-hero:       linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+
   /* Navbar — solid deep green, always readable */
-  --nav-bg:          #064e3b;        /* Emerald-900 — deep, trustworthy */
+  --nav-bg:          #064e3b;
   --nav-bg-scroll:   rgba(4, 47, 36, 0.96);
   --nav-border:      rgba(16, 185, 129, 0.25);
-  --nav-text:        #ecfdf5;        /* very light green-white */
+  --nav-text:        #ecfdf5;
   --nav-text-muted:  rgba(236, 253, 245, 0.65);
-  --nav-accent:      #34d399;        /* bright emerald for active/hover */
+  --nav-accent:      #34d399;
 
-  /* Glass system (dark glass panels used in modals / scrolled nav) */
+  /* Glass system */
   --glass-bg:        rgba(4, 47, 36, 0.88);
   --glass-border:    rgba(16, 185, 129, 0.2);
   --glass-shadow:    0 8px 32px rgba(0, 0, 0, 0.25);
@@ -98,7 +102,7 @@ button {
 
 img { max-width: 100%; display: block; }
 
-/* ─── Utility: Glass Panel (light — for cards on white pages) ────────────── */
+/* ─── Utility: Glass Panel ───────────────────────────────────────────────── */
 .glass-panel {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
@@ -136,10 +140,48 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
 }
 
+/* ─── Utility: Hero Slide ────────────────────────────────────────────────── */
+.hero-slide {
+  width: 100%;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+/* ─── Utility: Section Divider ───────────────────────────────────────────── */
+.section-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--surface-border) 20%, var(--surface-border) 80%, transparent);
+  margin: 0;
+}
+
+/* ─── Utility: Tag / Pill Badge ──────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--surface-dark);
+  color: var(--primary-dark);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--background); }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background var(--transition);
+}
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
@@ -161,4 +203,14 @@ img { max-width: 100%; display: block; }
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
 }

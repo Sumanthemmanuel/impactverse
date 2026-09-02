@@ -1,213 +1,401 @@
+/* ─── Page wrapper ──────────────────────────────────────────────────────── */
 .page {
-  padding-bottom: 4rem;
+  min-height: 100vh;
+  background: var(--background);
+  overflow-x: hidden;
 }
 
+/* ─── Hero ──────────────────────────────────────────────────────────────── */
 .hero {
-  min-height: 80vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
-  background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-}
-
-.heroContent {
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.badge {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-block;
-}
-
-.title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.description {
-  font-size: 1.125rem;
-  color: var(--text-muted);
-  max-width: 600px;
-  line-height: 1.6;
-}
-
-.ctaGroup {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.primaryBtn, .secondaryBtn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  border-radius: var(--radius-btn);
-  font-weight: 600;
-  transition: all var(--transition);
-}
-
-.primaryBtn {
-  background: var(--primary-gradient);
-  color: white;
-  box-shadow: var(--shadow-glow);
-}
-
-.primaryBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-}
-
-.secondaryBtn {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  color: var(--text-primary);
-}
-
-.secondaryBtn:hover {
-  background: var(--surface-hover);
-}
-
-/* Sections */
-.features, .portals {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 1.5rem;
-}
-
-.sectionHeader {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.sectionHeader h2 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.sectionHeader p {
-  color: var(--text-muted);
-  font-size: 1.125rem;
-}
-
-/* Features Grid */
-.featureGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.featureCard {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  padding: 2rem;
-  border-radius: var(--radius-card);
-  transition: transform var(--transition);
-}
-
-.featureCard:hover {
-  transform: translateY(-5px);
-  border-color: var(--primary);
-}
-
-.featureIconWrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(99, 102, 241, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.featureIcon {
-  color: var(--primary);
-}
-
-.featureCard h3 {
-  margin-bottom: 0.75rem;
-  font-size: 1.25rem;
-}
-
-.featureCard p {
-  color: var(--text-muted);
-  line-height: 1.5;
-  font-size: 0.95rem;
-}
-
-/* Portals Grid */
-.portalGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.portalCard {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  padding: 2rem;
-  border-radius: var(--radius-card);
-  text-align: center;
-  transition: all var(--transition);
   position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
-.portalCard h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  position: relative;
-  z-index: 2;
+.heroBg {
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
 }
 
-.portalCard p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  position: relative;
-  z-index: 2;
-}
-
-.portalCard::before {
-  content: "";
+.heroOverlay {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  opacity: 0;
-  transition: opacity var(--transition);
+  inset: 0;
+  background: linear-gradient(160deg, rgba(4, 47, 36, 0.88) 0%, rgba(6, 78, 59, 0.82) 60%, rgba(0, 0, 0, 0.7) 100%);
   z-index: 1;
 }
 
-.portalCard:hover {
-  transform: translateY(-5px);
+.heroContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 780px;
+  margin: 0 auto;
+  animation: fadeUp 0.8s ease both;
 }
 
-.portalCard:hover::before {
-  opacity: 0.1;
+.logoRing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
 }
 
-/* Portal Accents */
-.citizen:hover { border-color: var(--accent-citizen); }
-.citizen::before { background: var(--accent-citizen); }
+.logoImg {
+  border-radius: 50%;
+  object-fit: cover;
+}
 
-.student:hover { border-color: var(--accent-student); }
-.student::before { background: var(--accent-student); }
+.heroEyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+  margin-bottom: 1.25rem;
+}
 
-.university:hover { border-color: var(--accent-university); }
-.university::before { background: var(--accent-university); }
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, #ffffff 30%, #6ee7b7 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 5s ease infinite;
+}
 
-.government:hover { border-color: var(--accent-government); }
-.government::before { background: var(--accent-government); }
+.heroSubtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary);
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all var(--transition);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
+}
+
+.ctaPrimary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(16, 185, 129, 0.55);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  transition: all var(--transition);
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+/* ─── Banner Strip ──────────────────────────────────────────────────────── */
+.bannerStrip {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: #064e3b;
+}
+
+.bannerImg {
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* ─── Slide Grid ────────────────────────────────────────────────────────── */
+.slideSection {
+  background: #0a0a0a;
+}
+
+.slideGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 260px);
+}
+
+.slidePanel {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.slidePanelImg {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.slidePanel:hover .slidePanelImg {
+  transform: scale(1.05);
+}
+
+.slidePanelOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+  z-index: 1;
+}
+
+.slidePanelContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slideTag {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.85);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.65rem;
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.slideLabel {
+  font-family: var(--font-outfit);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* ─── Roles Section ─────────────────────────────────────────────────────── */
+.rolesSection {
+  background: var(--surface);
+  padding: 5rem 1.5rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.roleCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-top: 4px solid var(--card-accent, var(--primary));
+  border-radius: var(--radius-card);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all var(--transition);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.roleCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+  border-color: var(--card-accent, var(--primary));
+}
+
+.roleIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roleTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.roleDesc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.roleArrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  transition: gap var(--transition);
+}
+
+.roleCard:hover .roleArrow {
+  gap: 0.6rem;
+}
+
+/* ─── Stats Bar ─────────────────────────────────────────────────────────── */
+.statsBar {
+  background: var(--grad-hero);
+  padding: 1.5rem;
+}
+
+.statsInner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.statPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  padding: 0.55rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.2);
+  white-space: nowrap;
+}
+
+/* ─── Footer Bar ────────────────────────────────────────────────────────── */
+.footerBar {
+  background: #042f1e;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.03em;
+}
+
+.footerDot {
+  color: var(--primary);
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .rolesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .slideGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 220px);
+  }
+
+  .bannerStrip {
+    height: 120px;
+  }
+
+  .heroCtas {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .rolesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsInner {
+    gap: 0.75rem;
+  }
+}

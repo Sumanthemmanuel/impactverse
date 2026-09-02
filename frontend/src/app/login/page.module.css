@@ -1,120 +1,156 @@
 .page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 4rem 1.5rem;
+  position: relative;
   min-height: calc(100vh - 80px);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  padding: 4rem 2rem;
+}
+
+/* Background Layer */
+.bgWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/portals_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+}
+
+.bgOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(5, 5, 10, 0.7) 0%,
+    rgba(15, 15, 25, 0.9) 100%
+  );
+  z-index: -1;
+  backdrop-filter: blur(5px);
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  position: relative;
+  z-index: 10;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  animation: float 5s ease-in-out infinite;
 }
 
 .header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 .header p {
+  font-size: 1.25rem;
   color: var(--text-muted);
-  font-size: 1.125rem;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  padding: 2.5rem 2rem;
-  border-radius: var(--radius-card);
+.portalCard {
+  position: relative;
+  width: 260px;
+  padding: 3rem 2rem;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  transition: all var(--transition);
-  position: relative;
+  justify-content: center;
   overflow: hidden;
+  border-width: 1px;
 }
 
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  opacity: 0;
-  transition: opacity var(--transition);
-  z-index: 1;
-}
-
-.card > * {
-  position: relative;
-  z-index: 2;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card:hover::before {
-  opacity: 0.05;
+.portalCard:hover {
+  transform: translateY(-10px) scale(1.02);
+  z-index: 20;
 }
 
 .iconWrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
   transition: all var(--transition);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.card h2 {
+.portalCard h2 {
   font-size: 1.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+  transition: all var(--transition);
 }
 
-.card p {
+.portalCard p {
   color: var(--text-muted);
-  line-height: 1.5;
+  font-size: 0.95rem;
+  transition: all var(--transition);
 }
 
-/* Role Specific Accents */
-.citizen:hover { border-color: var(--accent-citizen); }
-.citizen::before { background: var(--accent-citizen); }
-.citizen .iconWrapper {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--accent-citizen);
+/* Glow Effects */
+.glowEffect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.5s ease;
+  z-index: -1;
+  pointer-events: none;
 }
-.citizen:hover .iconWrapper { background: var(--accent-citizen); color: white; }
 
-.student:hover { border-color: var(--accent-student); }
-.student::before { background: var(--accent-student); }
-.student .iconWrapper {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent-student);
+.portalCard:hover .glowEffect {
+  opacity: 0.15;
 }
-.student:hover .iconWrapper { background: var(--accent-student); color: white; }
 
-.university:hover { border-color: var(--accent-university); }
-.university::before { background: var(--accent-university); }
-.university .iconWrapper {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--accent-university);
-}
-.university:hover .iconWrapper { background: var(--accent-university); color: white; }
+/* Accent Colors */
+.citizen { color: var(--accent-citizen); background: rgba(16, 185, 129, 0.1); }
+.student { color: var(--accent-student); background: rgba(59, 130, 246, 0.1); }
+.university { color: var(--accent-university); background: rgba(245, 158, 11, 0.1); }
+.government { color: var(--accent-government); background: rgba(239, 68, 68, 0.1); }
+.industry { color: var(--accent-industry); background: rgba(168, 85, 247, 0.1); }
 
-.government:hover { border-color: var(--accent-government); }
-.government::before { background: var(--accent-government); }
-.government .iconWrapper {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--accent-government);
+.glow-citizen { --glow-color: var(--accent-citizen); }
+.glow-student { --glow-color: var(--accent-student); }
+.glow-university { --glow-color: var(--accent-university); }
+.glow-government { --glow-color: var(--accent-government); }
+.glow-industry { --glow-color: var(--accent-industry); }
+
+.portalCard:hover h2 {
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
-.government:hover .iconWrapper { background: var(--accent-government); color: white; }
+
+.portalCard:hover .iconWrapper.citizen { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); border-color: var(--accent-citizen); }
+.portalCard:hover .iconWrapper.student { box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); border-color: var(--accent-student); }
+.portalCard:hover .iconWrapper.university { box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); border-color: var(--accent-university); }
+.portalCard:hover .iconWrapper.government { box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); border-color: var(--accent-government); }
+.portalCard:hover .iconWrapper.industry { box-shadow: 0 0 30px rgba(168, 85, 247, 0.4); border-color: var(--accent-industry); }
+
+@media (max-width: 768px) {
+  .header h1 { font-size: 2.5rem; }
+  .portalCard { width: 100%; max-width: 350px; }
+}

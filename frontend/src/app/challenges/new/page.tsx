@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, classifierApi } from "@/lib/api";
 import styles from "./page.module.css";
-import { UploadCloud, Bot, MapPin, AlertTriangle, Send } from "lucide-react";
+import { UploadCloud, Bot, MapPin, AlertTriangle, Send, Camera as CameraIcon } from "lucide-react";
+
+import { supabase } from "@/lib/supabase";
+import { Geolocation } from '@capacitor/geolocation';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 const DOMAINS = [
   "Education", "Agriculture", "Healthcare", "Water Resources", 
@@ -24,14 +28,66 @@ export default function SubmitChallenge() {
     domain: "",
     severity: "MEDIUM",
     district: "",
-    is_anonymous: false
+    is_anonymous: false,
+    proposed_solution: "",
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
+
+  const [locationStatus, setLocationStatus] = useState<"IDLE" | "LOADING" | "SUCCESS" | "ERROR">("IDLE");
+
+  const [photo, setPhoto] = useState<string | null>(null);
+
+  const takePhoto = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera // Forces the live camera
+      });
+      setPhoto(image.dataUrl || null);
+    } catch (err) {
+      console.error("Camera error:", err);
+    }
+  };
+
+  const captureLocation = async () => {
+    setLocationStatus("LOADING");
+    try {
+      const permissions = await Geolocation.checkPermissions();
+      if (permissions.location !== 'granted') {
+        await Geolocation.requestPermissions();
+      }
+      
+      const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      setFormData(prev => ({
+        ...prev,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }));
+      setLocationStatus("SUCCESS");
+      setError("");
+    } catch (err) {
+      console.error("Location error:", err);
+      setError("Location permission denied. It is compulsory to share your location.");
+      setLocationStatus("ERROR");
+    }
+  };
 
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
 
   const analyzeWithAI = async () => {
     if (formData.narrative.length < 20) {
       setError("Please describe the issue in more detail (at least 20 characters).");
+      return;
+    }
+    if (formData.latitude === null) {
+      setError("Compulsory: Please capture your live location first.");
+      return;
+    }
+    if (!photo) {
+      setError("Compulsory: Please capture a live photo of the issue.");
       return;
     }
     setError("");
@@ -41,7 +97,6 @@ export default function SubmitChallenge() {
         text: formData.narrative
       });
       setAiAnalysis(res.data);
-      // Auto-suggest domain and severity from AI if not already set
       setFormData(prev => ({
         ...prev,
         domain: prev.domain || (res.data.predictions[0]?.domain) || DOMAINS[0],
@@ -63,10 +118,19 @@ export default function SubmitChallenge() {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/challenges/", formData);
-      router.push(`/challenges/${res.data.id}`);
+      const { data, error: sbError } = await supabase
+        .from('challenges')
+        .insert([formData])
+        .select();
+
+      if (sbError) throw sbError;
+      
+      if (data && data.length > 0) {
+        router.push(`/dashboard`); // Go back to dashboard to see realtime in action!
+      }
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Failed to submit challenge.");
+      console.error(err);
+      setError(err.message || "Failed to submit challenge to Supabase.");
     } finally {
       setLoading(false);
     }
@@ -91,6 +155,28 @@ export default function SubmitChallenge() {
         <form onSubmit={handleSubmit} className={styles.form}>
           {step === 1 && (
             <div className={styles.stepContent}>
+              
+              <div 
+                className={`${styles.uploadZone} ${photo ? styles.hasPhoto : ''}`} 
+                onClick={takePhoto}
+                style={{ backgroundImage: photo ? `url(${photo})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
+              >
+                {!photo && (
+                  <>
+                    <div className={styles.uploadIconWrapper}>
+                      <CameraIcon size={48} />
+                    </div>
+                    <h3>Take Live Photo (Compulsory)</h3>
+                    <p>Tap here to open your camera and snap the issue.</p>
+                  </>
+                )}
+                {photo && (
+                  <div className={styles.photoOverlay}>
+                    <p>Tap to retake photo</p>
+                  </div>
+                )}
+              </div>
+
               <div className={styles.inputGroup}>
                 <label>Title</label>
                 <input 
@@ -113,12 +199,26 @@ export default function SubmitChallenge() {
                   minLength={20}
                 />
               </div>
+
+              <div className={styles.locationZone}>
+                <button 
+                  type="button"
+                  className={`${styles.locationBtn} ${locationStatus === 'SUCCESS' ? styles.locSuccess : ''}`}
+                  onClick={captureLocation}
+                >
+                  <MapPin size={18} />
+                  {locationStatus === 'IDLE' && "Capture Live Location (Compulsory)"}
+                  {locationStatus === 'LOADING' && "Locating..."}
+                  {locationStatus === 'SUCCESS' && `Location Verified: ${formData.latitude?.toFixed(4)}, ${formData.longitude?.toFixed(4)}`}
+                  {locationStatus === 'ERROR' && "Failed. Try Again."}
+                </button>
+              </div>
               
               <button 
                 type="button" 
                 className={styles.nextBtn} 
                 onClick={analyzeWithAI}
-                disabled={loading}
+                disabled={loading || locationStatus !== 'SUCCESS'}
               >
                 <Bot size={18} /> {loading ? "Analyzing..." : "Next: AI Analysis"}
               </button>
@@ -184,6 +284,16 @@ export default function SubmitChallenge() {
                   placeholder="E.g. Ranchi, Dhanbad..."
                   value={formData.district}
                   onChange={e => setFormData({...formData, district: e.target.value})}
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label>Probable Solution (Optional)</label>
+                <textarea 
+                  value={formData.proposed_solution}
+                  onChange={(e) => setFormData({...formData, proposed_solution: e.target.value})}
+                  className={styles.textarea}
+                  placeholder="How do you think this could be solved? (e.g., Replace the damaged valve at the junction)"
                 />
               </div>
 

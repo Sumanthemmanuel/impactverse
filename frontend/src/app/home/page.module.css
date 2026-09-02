@@ -1,0 +1,409 @@
+.main {
+  background-color: var(--background);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ─── Hero Banner ─────────────────────────────────────────────────────── */
+.heroBanner {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: #064e3b;
+}
+
+.bannerImg {
+  object-fit: cover;
+  object-position: center top;
+  z-index: 0;
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 47, 36, 0.15) 0%,
+    rgba(4, 47, 36, 0.55) 55%,
+    rgba(4, 47, 36, 0.85) 100%
+  );
+  z-index: 1;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 2rem 5.5rem;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.bannerTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.bannerTagline {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Search ──────────────────────────────────────────────────────────── */
+.searchFloat {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  margin: -28px auto 0;
+  padding: 0 1.5rem 2rem;
+  width: 100%;
+  align-self: center;
+}
+
+.searchBar {
+  display: flex;
+  background: white;
+  border-radius: 50px;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.14);
+  border: 1px solid var(--surface-border);
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.searchIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.searchBar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 0.75rem 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: transparent;
+  min-width: 0;
+}
+
+.searchBtn {
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.searchBtn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* ─── Section Titles ──────────────────────────────────────────────────── */
+.sectionTitle {
+  font-size: 1.9rem;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 52px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* ─── Portals Section ─────────────────────────────────────────────────── */
+.portalsSection {
+  padding: 4rem 0;
+  background: white;
+}
+
+.portalsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.portalCard {
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  min-height: 200px;
+  border: 1px solid var(--surface-border);
+  transition: all var(--transition);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  display: block;
+}
+
+.portalBg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  transition: opacity var(--transition-slow);
+}
+
+.portalBgImg {
+  object-fit: cover;
+}
+
+.portalCard:hover .portalBg {
+  opacity: 0.15;
+}
+
+.portalCardInner {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.portalIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition);
+}
+
+.portalCard:hover .portalIcon {
+  transform: scale(1.08);
+}
+
+.portalCardInner h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.portalCardInner p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.portalArrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.portalCard:hover .portalArrow {
+  transform: translateX(4px);
+  color: var(--primary);
+}
+
+.citizenCard  { border-top: 4px solid var(--accent-citizen); }
+.studentCard  { border-top: 4px solid var(--accent-student); }
+.govCard      { border-top: 4px solid var(--accent-government); }
+.industryCard { border-top: 4px solid var(--accent-industry); }
+
+.portalCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.1);
+}
+
+/* ─── Domains Grid ────────────────────────────────────────────────────── */
+.domainsSection {
+  padding: 4rem 0;
+  background: var(--background);
+}
+
+.domainsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.domainCard {
+  background: white;
+  border: 1px solid var(--surface-border);
+  border-left: 4px solid var(--domain-color, var(--primary));
+  border-radius: var(--radius-card);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.domainCard:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  border-color: var(--domain-color, var(--primary));
+  background: var(--surface-dark);
+}
+
+.domainIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.domainContent {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+}
+
+.domainContent h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.domainCount {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.domainArrow {
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.domainCard:hover .domainArrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--primary);
+}
+
+/* ─── How It Works ────────────────────────────────────────────────────── */
+.howSection {
+  padding: 5rem 0;
+  background: white;
+}
+
+.howGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.howCard {
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.howStep {
+  font-family: var(--font-outfit);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.15;
+}
+
+.howIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.howTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.howDesc {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 280px;
+}
+
+.howConnector {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 2px;
+  height: 60px;
+  background: var(--surface-border);
+  transform: translateY(-50%);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .portalsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .portalsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .howGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .howConnector {
+    display: none;
+  }
+
+  .bannerContent {
+    padding: 1.5rem 1.5rem 5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .domainsGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,4 +1,5 @@
 .page {
+  position: relative;
   max-width: 500px;
   margin: 0 auto;
   padding: 4rem 1.5rem;
@@ -8,6 +9,34 @@
   justify-content: center;
 }
 
+/* Background Layer */
+.bgWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/portals_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+}
+
+.bgOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(5, 5, 10, 0.7) 0%,
+    rgba(15, 15, 25, 0.9) 100%
+  );
+  z-index: -1;
+  backdrop-filter: blur(5px);
+}
+
 .backLink {
   display: flex;
   align-items: center;
@@ -15,29 +44,30 @@
   color: var(--text-muted);
   margin-bottom: 2rem;
   font-size: 0.95rem;
+  transition: all var(--transition);
 }
 
 .backLink:hover {
   color: var(--text-primary);
+  transform: translateX(-5px);
 }
 
 .authCard {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
   padding: 2.5rem 2rem;
-  border-radius: var(--radius-card);
   border-top-width: 4px;
 }
 
-.citizen { border-top-color: var(--accent-citizen); }
-.student { border-top-color: var(--accent-student); }
-.university { border-top-color: var(--accent-university); }
-.government { border-top-color: var(--accent-government); }
+.citizen { border-top-color: var(--accent-citizen); box-shadow: 0 -4px 30px rgba(16, 185, 129, 0.2), var(--glass-shadow); }
+.student { border-top-color: var(--accent-student); box-shadow: 0 -4px 30px rgba(59, 130, 246, 0.2), var(--glass-shadow); }
+.university { border-top-color: var(--accent-university); box-shadow: 0 -4px 30px rgba(245, 158, 11, 0.2), var(--glass-shadow); }
+.government { border-top-color: var(--accent-government); box-shadow: 0 -4px 30px rgba(239, 68, 68, 0.2), var(--glass-shadow); }
+.industry { border-top-color: var(--accent-industry); box-shadow: 0 -4px 30px rgba(168, 85, 247, 0.2), var(--glass-shadow); }
 
-.citizen .iconWrapper { color: var(--accent-citizen); background: rgba(16, 185, 129, 0.1); }
-.student .iconWrapper { color: var(--accent-student); background: rgba(59, 130, 246, 0.1); }
-.university .iconWrapper { color: var(--accent-university); background: rgba(245, 158, 11, 0.1); }
-.government .iconWrapper { color: var(--accent-government); background: rgba(239, 68, 68, 0.1); }
+.citizenIcon { color: var(--accent-citizen); background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3) !important; }
+.studentIcon { color: var(--accent-student); background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3) !important; }
+.universityIcon { color: var(--accent-university); background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3) !important; }
+.governmentIcon { color: var(--accent-government); background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3) !important; }
+.industryIcon { color: var(--accent-industry); background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3) !important; }
 
 .header {
   text-align: center;
@@ -52,6 +82,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
+  border: 1px solid transparent;
 }
 
 .header h1 {
@@ -91,6 +122,22 @@
   color: var(--text-muted);
 }
 
+.glassInput {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 0.875rem;
+  border-radius: var(--radius-btn);
+  transition: all var(--transition);
+}
+
+.glassInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
 .ipAgreementInfo {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
@@ -113,7 +160,8 @@
 
 .submitBtn:hover:not(:disabled) {
   opacity: 0.9;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
 }
 
 .submitBtn:disabled {

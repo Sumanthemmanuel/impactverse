@@ -8,6 +8,8 @@ import { api } from "@/lib/api";
 import styles from "./page.module.css";
 import { Activity, Clock, CheckCircle2, ShieldCheck, FileText, Bot } from "lucide-react";
 
+import { supabase } from "@/lib/supabase";
+
 export default function Dashboard() {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
@@ -22,20 +24,51 @@ export default function Dashboard() {
     }
     setRole(getUserRole());
     fetchDashboardData();
+
+    // Set up Realtime Subscription
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'challenges' },
+        (payload) => {
+          console.log('New challenge received!', payload);
+          setRecentChallenges((prev) => [payload.new, ...prev].slice(0, 5));
+          setStats((prev) => ({
+            ...prev,
+            total: prev.total + 1,
+            pending: prev.pending + 1
+          }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [router]);
 
   const fetchDashboardData = async () => {
     try {
-      const res = await api.get("/challenges/?page=1&page_size=5");
-      setRecentChallenges(res.data.data);
-      setStats({
-        total: res.data.total,
-        pending: res.data.data.filter((c: any) => c.status === "SUBMITTED").length,
-        matched: res.data.data.filter((c: any) => c.status === "MATCHED").length,
-        completed: res.data.data.filter((c: any) => c.status === "DEPLOYED").length,
-      });
+      const { data, error, count } = await supabase
+        .from('challenges')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      if (data) {
+        setRecentChallenges(data);
+      }
+      
+      if (count !== null) {
+        setStats(prev => ({ ...prev, total: count }));
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Supabase fetch error:", err);
+      // Fallback to empty if db not setup
+      setRecentChallenges([]);
     } finally {
       setLoading(false);
     }
@@ -49,6 +82,7 @@ export default function Dashboard() {
       case "STUDENT": return "Welcome, Innovator. Ready to solve real-world problems?";
       case "HEI_ADMIN": return "Welcome, University Admin. Review your latest AI matches.";
       case "GOVERNMENT": return "Welcome, Official. Overview of statewide challenges.";
+      case "INDUSTRY": return "Welcome, Corporate Partner. Discover ideas to invest in.";
       default: return "Welcome to your dashboard.";
     }
   };
@@ -104,6 +138,11 @@ export default function Dashboard() {
                 <div className={styles.challengeInfo}>
                   <h4>{challenge.title}</h4>
                   <span className={styles.domain}>{challenge.domain} • {challenge.district || 'Jharkhand'}</span>
+                  {challenge.proposed_solution && (
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', borderLeft: '2px solid var(--primary)', paddingLeft: '0.5rem' }}>
+                      <strong>💡 Proposed Solution:</strong> {challenge.proposed_solution.length > 50 ? challenge.proposed_solution.substring(0, 50) + '...' : challenge.proposed_solution}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.challengeMeta}>
                   <span className={`${styles.statusBadge} ${styles[challenge.status.toLowerCase()]}`}>
@@ -133,10 +172,16 @@ export default function Dashboard() {
             </div>
           )}
           {role === 'CITIZEN' && (
-            <div className={styles.actionCard}>
-              <h3>Report an Issue</h3>
-              <p>Help us improve Jharkhand by reporting local issues.</p>
-              <Link href="/challenges/new" className={styles.actionBtn}>Submit New Grievance</Link>
+            <div className={`${styles.actionCard} ${styles.citizenActionCard}`}>
+              <div className={styles.pulseGlow}></div>
+              <div className={styles.citizenActionIcon}>
+                <ShieldCheck size={48} />
+              </div>
+              <h3>Upload Grievance Report</h3>
+              <p>Found a problem in your area? Tap here to snap a photo and alert the authorities immediately.</p>
+              <Link href="/challenges/new" className={styles.primaryActionBtn}>
+                + New Report
+              </Link>
             </div>
           )}
           {role === 'GOVERNMENT' && (
@@ -144,6 +189,13 @@ export default function Dashboard() {
               <h3>Verification Queue</h3>
               <p>There are {stats.pending} challenges waiting for verification.</p>
               <Link href="/admin" className={styles.actionBtn}>Go to Verifier Panel</Link>
+            </div>
+          )}
+          {role === 'INDUSTRY' && (
+            <div className={styles.actionCard}>
+              <h3>Sponsorships</h3>
+              <p>Explore validated AI matches ready for corporate investment and scaling.</p>
+              <Link href="/challenges" className={styles.actionBtn}>View Opportunities</Link>
             </div>
           )}
         </div>

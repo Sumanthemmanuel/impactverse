@@ -4,3 +4,8 @@ __pycache__/
 .env
 uploads/
 .pytest_cache/
+frontend/android/jdk/ 
+frontend/android/jdk/ 
+frontend/android/jdk.zip 
+frontend/android/jdk21.zip 
+frontend/android/jdk21/ 

@@ -1,96 +1,202 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import {
+  UserCircle,
+  ShieldCheck,
+  GraduationCap,
+  Briefcase,
+  ArrowRight,
+  MapPin,
+  Brain,
+  Users,
+} from "lucide-react";
 import styles from "./page.module.css";
-import { ArrowRight, ShieldCheck, MapPin, Search, Cpu } from "lucide-react";
+
+const SLIDES = [
+  {
+    src: "/slides/india.jpeg",
+    label: "Innovate. Collaborate. Transform India.",
+    tag: "Mission",
+  },
+  {
+    src: "/slides/official.jpeg",
+    label: "Government-Backed Innovation Framework",
+    tag: "Authority",
+  },
+  {
+    src: "/slides/people.jpeg",
+    label: "Voices of Every Citizen Matter",
+    tag: "Inclusion",
+  },
+  {
+    src: "/slides/students.jpeg",
+    label: "Students Building Tomorrow's Solutions",
+    tag: "Innovation",
+  },
+];
+
+const ROLES = [
+  {
+    href: "/challenges/new",
+    icon: UserCircle,
+    title: "Citizen",
+    desc: "Report issues, track resolution, and participate in governance.",
+    accent: "var(--accent-citizen)",
+    bg: "rgba(16,185,129,0.08)",
+  },
+  {
+    href: "/login/student",
+    icon: GraduationCap,
+    title: "Student / Innovator",
+    desc: "Take up real challenges from the community and build solutions.",
+    accent: "var(--accent-student)",
+    bg: "rgba(59,130,246,0.08)",
+  },
+  {
+    href: "/login/government",
+    icon: ShieldCheck,
+    title: "Government Official",
+    desc: "Verify issues, assign teams, and track impact at district level.",
+    accent: "var(--accent-government)",
+    bg: "rgba(239,68,68,0.08)",
+  },
+  {
+    href: "/login/industry",
+    icon: Briefcase,
+    title: "Industry Partner",
+    desc: "Sponsor scalable solutions and co-create with innovators.",
+    accent: "var(--accent-industry)",
+    bg: "rgba(168,85,247,0.08)",
+  },
+];
+
+const STATS = [
+  { icon: Brain,  label: "10 Domains" },
+  { icon: MapPin, label: "24 Districts" },
+  { icon: Brain,  label: "AI-Powered" },
+  { icon: Users,  label: "Fair Allocation" },
+];
 
 export default function LandingPage() {
   return (
-    <div className={styles.page}>
-      <div className={styles.hero}>
+    <main className={styles.page}>
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <section className={styles.hero}>
+        <Image
+          src="/hero_bg.jpg"
+          alt="Jharkhand hero background"
+          fill
+          priority
+          className={styles.heroBg}
+          sizes="100vw"
+        />
+        <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
-          <div className={styles.badge}>
-            <span className="text-gradient">SIH 2026 Innovation</span>
+          <div className={styles.logoRing}>
+            <Image
+              src="/logo.jpg"
+              alt="SICP Government of Jharkhand"
+              width={80}
+              height={80}
+              className={styles.logoImg}
+              priority
+            />
           </div>
-          <h1 className={styles.title}>
-            AI-Driven Grievance <br />
-            <span className="text-gradient">Triage & Matching</span> Platform
+          <p className={styles.heroEyebrow}>Smart India Hackathon 2026 · SIH26043</p>
+          <h1 className={styles.heroTitle}>
+            Societal Innovation &amp;<br />Collaborative Portal
           </h1>
-          <p className={styles.description}>
-            Revolutionizing how public grievances in Jharkhand are processed. 
-            Our AI automatically categorizes complaints and matches them with university 
-            student teams for innovative solutions.
+          <p className={styles.heroSubtitle}>
+            Empowering Jharkhand through student innovation, government action, and community voice
           </p>
-          <div className={styles.ctaGroup}>
-            <Link href="/challenges/new" className={styles.primaryBtn}>
-              Submit a Grievance <ArrowRight size={18} />
+          <div className={styles.heroCtas}>
+            <Link href="/challenges/new" className={styles.ctaPrimary}>
+              Report an Issue <ArrowRight size={18} />
             </Link>
-            <Link href="/login" className={styles.secondaryBtn}>
-              Go to Portal
+            <Link href="/home" className={styles.ctaSecondary}>
+              Explore Portal <ArrowRight size={18} />
             </Link>
-          </div>
-        </div>
-      </div>
-
-      <section className={styles.features}>
-        <div className={styles.sectionHeader}>
-          <h2>How It Works</h2>
-          <p>An automated end-to-end pipeline for maximum impact.</p>
-        </div>
-        <div className={styles.featureGrid}>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <MapPin className={styles.featureIcon} />
-            </div>
-            <h3>1. Submit</h3>
-            <p>Citizens submit grievances with photos and location data via our portal.</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <Cpu className={styles.featureIcon} />
-            </div>
-            <h3>2. AI Triage</h3>
-            <p>Our NLP model categorizes the domain, detects severity, and filters spam.</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <Search className={styles.featureIcon} />
-            </div>
-            <h3>3. Smart Match</h3>
-            <p>Challenges are matched to relevant university departments across Jharkhand.</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <ShieldCheck className={styles.featureIcon} />
-            </div>
-            <h3>4. Dual License IP</h3>
-            <p>Students retain commercial rights, while govt gets a royalty-free license.</p>
           </div>
         </div>
       </section>
 
-      <section className={styles.portals}>
-        <div className={styles.sectionHeader}>
-          <h2>Access Portals</h2>
-          <p>Login to your dedicated portal to get started.</p>
-        </div>
-        <div className={styles.portalGrid}>
-          <Link href="/login/citizen" className={`${styles.portalCard} ${styles.citizen}`}>
-            <h3>Citizen Portal</h3>
-            <p>Track your submissions</p>
-          </Link>
-          <Link href="/login/student" className={`${styles.portalCard} ${styles.student}`}>
-            <h3>Student Portal</h3>
-            <p>Find challenges to solve</p>
-          </Link>
-          <Link href="/login/university" className={`${styles.portalCard} ${styles.university}`}>
-            <h3>University Portal</h3>
-            <p>Manage teams & matches</p>
-          </Link>
-          <Link href="/login/government" className={`${styles.portalCard} ${styles.government}`}>
-            <h3>Govt Portal</h3>
-            <p>Verify and oversee</p>
-          </Link>
+      {/* ── Official Banner ───────────────────────────────────────────── */}
+      <section className={styles.bannerStrip} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#fff', padding: '1rem 0' }}>
+        <Image
+          src="/govt_banner.jpeg"
+          alt="Government of Jharkhand"
+          width={800}
+          height={150}
+          className={styles.bannerImg}
+          style={{ objectFit: 'contain', width: 'auto', height: '150px' }}
+        />
+      </section>
+
+      {/* ── Slide Grid ───────────────────────────────────────────────── */}
+      <section className={styles.slideSection}>
+        <div className={styles.slideGrid}>
+          {SLIDES.map((s) => (
+            <div key={s.src} className={styles.slidePanel}>
+              <Image
+                src={s.src}
+                alt={s.label}
+                fill
+                className={styles.slidePanelImg}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              <div className={styles.slidePanelOverlay} />
+              <div className={styles.slidePanelContent}>
+                <span className={styles.slideTag}>{s.tag}</span>
+                <p className={styles.slideLabel}>{s.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
-    </div>
+
+      {/* ── Who Can Use This Portal? ─────────────────────────────────── */}
+      <section className={styles.rolesSection}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>Who Can Use This Portal?</h2>
+          <div className={styles.rolesGrid}>
+            {ROLES.map((r) => (
+              <Link key={r.href} href={r.href} className={styles.roleCard} style={{ "--card-accent": r.accent, "--card-bg": r.bg } as React.CSSProperties}>
+                <div className={styles.roleIcon} style={{ background: r.bg, color: r.accent }}>
+                  <r.icon size={28} />
+                </div>
+                <h3 className={styles.roleTitle}>{r.title}</h3>
+                <p className={styles.roleDesc}>{r.desc}</p>
+                <span className={styles.roleArrow} style={{ color: r.accent }}>
+                  Get Started <ArrowRight size={14} />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats Bar ────────────────────────────────────────────────── */}
+      <section className={styles.statsBar}>
+        <div className={styles.statsInner}>
+          {STATS.map((s, i) => (
+            <div key={i} className={styles.statPill}>
+              <s.icon size={16} />
+              <span>{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Footer Bar ───────────────────────────────────────────────── */}
+      <footer className={styles.footerBar}>
+        <span>SIH26043</span>
+        <span className={styles.footerDot}>·</span>
+        <span>Built for Jharkhand</span>
+        <span className={styles.footerDot}>·</span>
+        <span>Good Governance. Inclusive Development.</span>
+      </footer>
+    </main>
   );
 }
