@@ -22,7 +22,10 @@ class ChallengeCluster(Base, TimestampMixin):
     centroid_embedding = mapped_column(Vector(384), nullable=True)
     challenge_count: Mapped[int] = mapped_column(Integer, default=1)
 
-    challenges: Mapped[List["Challenge"]] = relationship(back_populates="cluster")
+    challenges: Mapped[List["Challenge"]] = relationship(
+        back_populates="cluster",
+        foreign_keys="Challenge.cluster_id",
+    )
 
 class Challenge(Base, TimestampMixin):
     __tablename__ = 'challenges'

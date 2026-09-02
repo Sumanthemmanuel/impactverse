@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 from fastapi import UploadFile
 
-from app.core.config import settings
+from app.config import settings
 from app.core.constants import MediaType
 from app.core.exceptions import ValidationError
 

@@ -6,7 +6,7 @@ from app.core.permissions import require_role
 from app.core.constants import UserRole
 from app.schemas.user import UserResponse, UserUpdate
 from app.schemas.common import PaginatedResponse
-from app.services.user import UserService
+from app.services.user_service import UserService
 import math
 
 router = APIRouter()

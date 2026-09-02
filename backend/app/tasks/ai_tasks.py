@@ -113,10 +113,10 @@ def compute_capability_matches(self, challenge_id: str):
 
 async def _async_compute_matches(challenge_id):
     """Async helper for computing matches."""
-    from app.database import async_session_factory
+    from app.database import async_session_maker
     from app.ai.capability_matcher import capability_matcher
     
-    async with async_session_factory() as session:
+    async with async_session_maker() as session:
         matches = await capability_matcher.match_institutions(session, challenge_id)
         return matches
 

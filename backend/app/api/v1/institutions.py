@@ -6,7 +6,7 @@ from app.core.permissions import require_role
 from app.core.constants import UserRole
 from app.schemas.institution import InstitutionCreate, InstitutionResponse, InstitutionUpdate, DepartmentCreate, DepartmentResponse, LabCreate, LabResponse
 from app.schemas.common import PaginatedResponse
-from app.services.institution import InstitutionService
+from app.services.institution_service import InstitutionService
 import math
 
 router = APIRouter()

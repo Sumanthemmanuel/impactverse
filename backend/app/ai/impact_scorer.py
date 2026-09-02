@@ -1,6 +1,6 @@
 import math
 from typing import Tuple, Dict, Optional
-from app.models import ChallengeSeverity, ChallengeDomain
+from app.core.constants import ChallengeSeverity, ChallengeDomain
 
 class ImpactScorer:
     SEVERITY_WEIGHT = 0.25

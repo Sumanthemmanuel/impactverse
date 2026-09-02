@@ -42,6 +42,8 @@ class Settings(BaseSettings):
 
     # AI Matching Settings
     EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
+    EMBEDDING_DEVICE: str = "auto"  # auto, cuda, or cpu
+    EMBEDDING_BATCH_SIZE: int = 16
     SIMILARITY_THRESHOLD: float = 0.7
     DUPLICATE_SIMILARITY_THRESHOLD: float = 0.95
 

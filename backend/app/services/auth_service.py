@@ -8,7 +8,7 @@ from sqlalchemy import select
 
 from app.models.user import User, UserRole
 from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
-from app.core.config import settings
+from app.config import settings
 from app.core.exceptions import ConflictError, UnauthorizedError, NotFoundError
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

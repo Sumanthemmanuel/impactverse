@@ -7,7 +7,7 @@ from app.core.permissions import require_role
 from app.core.constants import UserRole
 from app.schemas.matching import MatchResponse, ScoreConfigResponse, ScoreConfig
 from app.schemas.project import ProjectResponse
-from app.services.matching import MatchingService
+from app.services.matching_service import MatchingService
 
 router = APIRouter()
 

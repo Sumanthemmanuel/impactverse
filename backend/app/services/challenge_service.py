@@ -18,16 +18,21 @@ class ChallengeService:
 
     async def create_challenge(self, data: ChallengeCreate, reporter_id: uuid.UUID | None) -> Challenge:
         geom = None
-        if data.latitude is not None and data.longitude is not None:
-            geom = from_shape(Point(data.longitude, data.latitude), srid=4326)
+        if data.location is not None:
+            geom = from_shape(Point(data.location.longitude, data.location.latitude), srid=4326)
 
         challenge = Challenge(
             title=data.title,
             narrative=data.narrative,
             reporter_id=reporter_id,
-            status=ChallengeStatus.SUBMITTED,
+            is_anonymous=data.is_anonymous,
             location=geom,
-            district=data.district
+            address=data.address,
+            domain=data.domain,
+            severity=data.severity,
+            status=ChallengeStatus.SUBMITTED,
+            district=data.district,
+            affected_population=data.affected_population,
         )
         self.db.add(challenge)
         await self.db.commit()
@@ -36,7 +41,7 @@ class ChallengeService:
         history = ChallengeStatusHistory(
             challenge_id=challenge.id,
             to_status=ChallengeStatus.SUBMITTED,
-            changed_by_id=reporter_id
+            changed_by=reporter_id
         )
         self.db.add(history)
         await self.db.commit()
@@ -120,7 +125,7 @@ class ChallengeService:
             challenge_id=challenge.id,
             from_status=challenge.status,
             to_status=new_status,
-            changed_by_id=user_id,
+            changed_by=user_id,
             notes=notes
         )
         challenge.status = new_status
@@ -144,4 +149,42 @@ class ChallengeService:
         return [], 0
 
     async def _run_ai_enrichment(self, challenge: Challenge) -> Challenge:
+        """Populate the challenge's AI fields without requiring a Celery worker.
+
+        Synchronous enrichment keeps the create/update API usable in local
+        deployments; the Celery task can run the same work asynchronously in
+        production.
+        """
+        from app.ai.classifier import classifier
+        from app.ai.embeddings import embedding_service
+        from app.ai.impact_scorer import impact_scorer
+        from app.ai.text_extractor import text_extractor
+
+        text = f"{challenge.title} {challenge.narrative}"
+        challenge.embedding = embedding_service.get_embedding(text)
+        domain, confidence = classifier.classify_domain(text)
+        challenge.ai_domain = domain.value
+        challenge.ai_confidence = confidence
+        challenge.ai_tags = classifier.extract_tags(text)
+        challenge.ai_summary = classifier.generate_summary(text)
+
+        urgency_count = text_extractor.count_urgency_indicators(text)
+        has_location = challenge.location is not None
+        score, _ = impact_scorer.compute_impact_score(
+            severity=challenge.severity,
+            affected_population=challenge.affected_population,
+            urgency_keywords_found=urgency_count,
+            evidence_count=0,
+            has_location=has_location,
+            has_media=False,
+            domain=challenge.domain,
+        )
+        challenge.impact_score = score
+        challenge.evidence_score = impact_scorer.compute_evidence_score(
+            media_count=0,
+            has_location=has_location,
+            narrative_length=len(challenge.narrative),
+        )
+        await self.db.commit()
+        await self.db.refresh(challenge)
         return challenge

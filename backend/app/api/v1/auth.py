@@ -4,8 +4,8 @@ from app.api.deps import get_db, get_current_active_user
 from app.schemas.auth import RegisterRequest, LoginRequest, RefreshTokenRequest, TokenResponse, ChangePasswordRequest
 from app.schemas.user import UserResponse, UserUpdate
 from app.schemas.common import SuccessResponse
-from app.services.auth import AuthService
-from app.services.user import UserService
+from app.services.auth_service import AuthService
+from app.services.user_service import UserService
 
 router = APIRouter()
 

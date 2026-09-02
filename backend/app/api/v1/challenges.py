@@ -6,8 +6,8 @@ from app.core.permissions import require_role
 from app.core.constants import UserRole, ChallengeDomain, ChallengeStatus, ChallengeSeverity
 from app.schemas.challenge import ChallengeCreate, ChallengeResponse, ChallengeUpdate, ChallengeMediaResponse, ChallengeVerifyRequest, ChallengeSimilarResponse, ChallengeTimelineEntry, ChallengeHeatmapPoint, ChallengeClusterResponse
 from app.schemas.common import PaginatedResponse
-from app.services.challenge import ChallengeService
-from app.services.file import FileService
+from app.services.challenge_service import ChallengeService
+from app.services.file_service import FileService
 import math
 
 router = APIRouter()

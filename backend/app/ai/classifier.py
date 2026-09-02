@@ -1,6 +1,6 @@
 import re
 from typing import Tuple, List, Optional
-from app.models import ChallengeDomain, ChallengeSeverity
+from app.core.constants import ChallengeDomain, ChallengeSeverity
 from app.ai.embeddings import embedding_service
 
 class ChallengeClassifier:
@@ -21,7 +21,7 @@ class ChallengeClassifier:
     }
 
     def classify_domain(self, text: str) -> Tuple[ChallengeDomain, float]:
-        text_lower = text.lower()
+        text_lower = (text or "").lower()
         best_domain = ChallengeDomain.OTHER
         max_score = 0.0
 
@@ -35,9 +35,11 @@ class ChallengeClassifier:
             confidence = min(max_score * 0.2, 0.9)
             return best_domain, confidence
 
-        # Fallback to embeddings
+        # Fall back to embeddings when no explicit keyword was found.  This
+        # keeps free-form reports useful without letting a weak match override
+        # a clear, explainable keyword match.
         text_emb = embedding_service.get_embedding(text)
-        best_sim = 0.0
+        best_sim = -1.0
         for domain, keywords in self.DOMAIN_KEYWORDS.items():
             if not keywords:
                 continue
@@ -48,7 +50,11 @@ class ChallengeClassifier:
                 best_sim = sim
                 best_domain = domain
 
-        return best_domain, float(best_sim)
+        # The offline lexical fallback has no semantic signal for completely
+        # unrelated text.  Do not invent a category for a near-zero match.
+        if best_sim < 0.12:
+            return ChallengeDomain.OTHER, 0.0
+        return best_domain, round(float(best_sim), 4)
 
     def estimate_severity(self, text: str, affected_population: Optional[int] = None) -> ChallengeSeverity:
         text_lower = text.lower()
@@ -68,11 +74,13 @@ class ChallengeClassifier:
         return ChallengeSeverity.MEDIUM
 
     def extract_tags(self, text: str) -> List[str]:
-        words = re.findall(r'\b[A-Z][a-z]+\b', text)
-        return list(set(words))
+        words = re.findall(r'\b[A-Z][a-z]+\b', text or "")
+        return sorted(set(words))
 
     def generate_summary(self, text: str, max_length: int = 200) -> str:
-        sentences = re.split(r'(?<=[.!?]) +', text)
+        if max_length < 4:
+            raise ValueError("max_length must be at least 4")
+        sentences = re.split(r'(?<=[.!?]) +', (text or "").strip())
         summary = " ".join(sentences[:3])
         if len(summary) > max_length:
             return summary[:max_length-3] + "..."

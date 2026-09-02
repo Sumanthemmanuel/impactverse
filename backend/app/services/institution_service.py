@@ -19,12 +19,21 @@ class InstitutionService:
             raise ConflictError("Institution name already exists")
 
         geom = None
-        if data.latitude is not None and data.longitude is not None:
-            geom = from_shape(Point(data.longitude, data.latitude), srid=4326)
+        if data.location is not None:
+            geom = from_shape(Point(data.location.longitude, data.location.latitude), srid=4326)
 
         institution = Institution(
             name=data.name,
+            institution_type=data.institution_type,
+            address=data.address,
             district=data.district,
+            state=data.state,
+            website=data.website,
+            established_year=data.established_year,
+            accreditation=data.accreditation,
+            incubation_facilities=data.incubation_facilities,
+            total_faculty=data.total_faculty,
+            total_students=data.total_students,
             location=geom,
             admin_user_id=admin_user_id
         )
@@ -85,7 +94,9 @@ class InstitutionService:
         lab = Lab(
             department_id=department_id,
             name=data.name,
-            capabilities=data.capabilities
+            description=data.description,
+            equipment=data.equipment,
+            specialization=data.specialization,
         )
         self.db.add(lab)
         await self.db.commit()

@@ -1,10 +1,10 @@
 import math
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from app.models import Challenge, Institution, Department, Faculty, Lab
+from app.models import Challenge, Institution, Department, FacultyProfile, Lab
 from app.ai.embeddings import embedding_service
 
 class CapabilityMatcher:
@@ -15,6 +15,7 @@ class CapabilityMatcher:
     TEAM_CAPACITY_WEIGHT = 0.10
     GEOGRAPHIC_PROXIMITY_WEIGHT = 0.05
     INCUBATION_READINESS_WEIGHT = 0.10
+    FACULTY_MATCH_THRESHOLD = 0.15
 
     async def match_institutions(self, db: AsyncSession, challenge_id: UUID) -> List[Dict[str, Any]]:
         # Load Challenge
@@ -22,40 +23,48 @@ class CapabilityMatcher:
         result = await db.execute(challenge_stmt)
         challenge = result.scalar_one_or_none()
         
-        if not challenge or not challenge.embedding:
+        if not challenge:
             return []
 
+        challenge_embedding = challenge.embedding or embedding_service.get_embedding(
+            f"{challenge.title} {challenge.narrative}"
+        )
+
         # Load Institutions
-        inst_stmt = select(Institution).where(Institution.is_verified == True).options(
-            selectinload(Institution.departments),
-            selectinload(Institution.faculty),
-            selectinload(Institution.labs)
+        inst_stmt = select(Institution).where(Institution.is_verified.is_(True)).options(
+            selectinload(Institution.departments).selectinload(Department.faculty).selectinload(FacultyProfile.user),
+            selectinload(Institution.departments).selectinload(Department.labs),
         )
         result = await db.execute(inst_stmt)
         institutions = result.scalars().all()
 
         matches = []
         for inst in institutions:
-            research_fit, matching_deps = self._compute_research_fit(challenge.embedding, inst.departments)
-            faculty_fit, matching_fac = self._compute_faculty_fit(challenge.embedding, inst.faculty)
-            lab_fit = self._compute_lab_fit(challenge.domain.name if challenge.domain else "", inst.labs)
+            departments = list(inst.departments or [])
+            faculty = [member for department in departments for member in (department.faculty or [])]
+            labs = [lab for department in departments for lab in (department.labs or []) if lab.is_available]
+
+            research_fit, matching_deps = self._compute_research_fit(challenge_embedding, departments)
+            faculty_fit, matching_fac = self._compute_faculty_fit(challenge_embedding, faculty)
+            domain_name = self._domain_name(challenge.domain)
+            lab_fit = self._compute_lab_fit(domain_name, labs)
             
             # Faculty past projects
-            past_projects_count = sum(f.past_projects_count for f in inst.faculty)
+            past_projects_count = sum(f.past_projects_count or 0 for f in faculty)
             past_projects_score = min(1.0, past_projects_count / 10.0)
             
             # Team capacity
-            available_faculty = sum(1 for f in inst.faculty if f.availability_status == "AVAILABLE")
+            available_faculty = sum(1 for f in faculty if f.availability_status)
             team_capacity_score = min(1.0, available_faculty / 5.0)
             
             # Geo proximity
             geo_score = self._compute_geographic_score(
-                (challenge.location_lat, challenge.location_lng), 
-                (inst.location_lat, inst.location_lng)
+                self._coordinates(challenge),
+                self._coordinates(inst),
             )
             
             # Incubation
-            incubation_score = 1.0 if inst.has_incubation_center else 0.3
+            incubation_score = 1.0 if inst.incubation_facilities else 0.3
             
             overall_score = (
                 research_fit * self.RESEARCH_FIT_WEIGHT +
@@ -71,7 +80,7 @@ class CapabilityMatcher:
             explanation = (
                 f"{int(overall_score * 100)}% fit — "
                 f"{matching_deps[0] if matching_deps else 'Institution'}, "
-                f"{len(inst.labs)} labs, {len(matching_fac)} faculty experts, "
+                f"{len(labs)} labs, {len(matching_fac)} faculty experts, "
                 f"{past_projects_count} prior projects, {capacity_str} capacity"
             )
 
@@ -94,29 +103,52 @@ class CapabilityMatcher:
         matches.sort(key=lambda x: x["overall_score"], reverse=True)
         return matches[:10]
 
+    @staticmethod
+    def _domain_name(domain: Any) -> str:
+        return (getattr(domain, "value", domain) or "").lower()
+
+    @staticmethod
+    def _coordinates(entity: Any) -> Tuple[Optional[float], Optional[float]]:
+        """Read coordinates when available, otherwise leave geo scoring neutral."""
+        if hasattr(entity, "location_lat") and hasattr(entity, "location_lng"):
+            return entity.location_lat, entity.location_lng
+        location = getattr(entity, "location", None)
+        if location is None:
+            return None, None
+        try:
+            from geoalchemy2.shape import to_shape
+
+            point = to_shape(location)
+            return point.y, point.x
+        except Exception:
+            return None, None
+
     def _compute_research_fit(self, challenge_embedding: List[float], departments: List[Department]) -> Tuple[float, List[str]]:
         best_score = 0.0
         matching = []
         for dep in departments:
-            if dep.embedding:
-                score = embedding_service.compute_similarity(challenge_embedding, dep.embedding)
-                if score > best_score:
-                    best_score = score
-                    matching = [dep.name]
-                elif score == best_score and score > 0:
-                    matching.append(dep.name)
+            profile = " ".join([dep.name, *(dep.research_areas or [])])
+            embedding = dep.capability_embedding or embedding_service.get_embedding(profile)
+            score = max(0.0, embedding_service.compute_similarity(challenge_embedding, embedding))
+            if score > best_score:
+                best_score = score
+                matching = [dep.name]
+            elif score == best_score and score > 0:
+                matching.append(dep.name)
         return best_score, matching
 
-    def _compute_faculty_fit(self, challenge_embedding: List[float], faculty_profiles: List[Faculty]) -> Tuple[float, List[str]]:
+    def _compute_faculty_fit(self, challenge_embedding: List[float], faculty_profiles: List[FacultyProfile]) -> Tuple[float, List[str]]:
         best_score = 0.0
         matching = []
         for fac in faculty_profiles:
-            if fac.expertise_embedding:
-                score = embedding_service.compute_similarity(challenge_embedding, fac.expertise_embedding)
-                if score > 0.5:
-                    matching.append(fac.name)
-                if score > best_score:
-                    best_score = score
+            profile = " ".join(fac.expertise_tags or [])
+            embedding = fac.expertise_embedding or embedding_service.get_embedding(profile)
+            score = max(0.0, embedding_service.compute_similarity(challenge_embedding, embedding))
+            faculty_name = getattr(getattr(fac, "user", None), "full_name", None) or str(fac.id)
+            if score >= self.FACULTY_MATCH_THRESHOLD:
+                matching.append(faculty_name)
+            if score > best_score:
+                best_score = score
         return best_score, matching
 
     def _compute_lab_fit(self, challenge_domain: str, labs: List[Lab]) -> float:
