@@ -1,0 +1,120 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: 1;
+}
+
+.card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card:hover::before {
+  opacity: 0.05;
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all var(--transition);
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.card p {
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Role Specific Accents */
+.citizen:hover { border-color: var(--accent-citizen); }
+.citizen::before { background: var(--accent-citizen); }
+.citizen .iconWrapper {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-citizen);
+}
+.citizen:hover .iconWrapper { background: var(--accent-citizen); color: white; }
+
+.student:hover { border-color: var(--accent-student); }
+.student::before { background: var(--accent-student); }
+.student .iconWrapper {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-student);
+}
+.student:hover .iconWrapper { background: var(--accent-student); color: white; }
+
+.university:hover { border-color: var(--accent-university); }
+.university::before { background: var(--accent-university); }
+.university .iconWrapper {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-university);
+}
+.university:hover .iconWrapper { background: var(--accent-university); color: white; }
+
+.government:hover { border-color: var(--accent-government); }
+.government::before { background: var(--accent-government); }
+.government .iconWrapper {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-government);
+}
+.government:hover .iconWrapper { background: var(--accent-government); color: white; }

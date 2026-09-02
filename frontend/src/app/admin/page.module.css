@@ -1,0 +1,245 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--text-muted);
+}
+
+.header {
+  margin-bottom: 2.5rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.cardHeader h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.iconWarning { color: var(--warning); }
+.iconSuccess { color: var(--success); }
+.iconPrimary { color: var(--primary); }
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--surface-hover);
+  border-radius: var(--radius-btn);
+  border: 1px dashed var(--surface-border);
+}
+
+/* Queue List */
+.queueList {
+  display: flex;
+  flex-direction: column;
+}
+
+.queueItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.queueItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.queueInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.queueTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.queueTitle:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.queueMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.domain {
+  color: var(--text-muted);
+}
+
+.severity {
+  font-weight: 600;
+}
+
+.severity.critical { color: var(--critical); }
+.severity.high { color: var(--warning); }
+.severity.medium { color: var(--accent-student); }
+.severity.low { color: var(--success); }
+
+.actionGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.approveBtn, .rejectBtn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-btn);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.approveBtn {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.approveBtn:hover {
+  background: var(--success);
+  color: white;
+}
+
+.rejectBtn {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--critical);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.rejectBtn:hover {
+  background: var(--critical);
+  color: white;
+}
+
+/* Health List */
+.healthList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.healthItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.healthLabel {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.healthValue {
+  font-weight: 500;
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.statusBadge.up {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.statusBadge.down {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--critical);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Summary Box */
+.summaryBox {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-card);
+  margin-bottom: 1.5rem;
+}
+
+.summaryNumber {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: var(--font-outfit);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.summaryText {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.linkBtn {
+  display: block;
+  text-align: center;
+  padding: 0.875rem;
+  background: var(--surface-border);
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.linkBtn:hover {
+  background: var(--surface-hover);
+}

@@ -1,0 +1,213 @@
+.page {
+  padding-bottom: 4rem;
+}
+
+.hero {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+}
+
+.heroContent {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.badge {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.primaryBtn, .secondaryBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.primaryBtn {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+.secondaryBtn {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
+}
+
+.secondaryBtn:hover {
+  background: var(--surface-hover);
+}
+
+/* Sections */
+.features, .portals {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sectionHeader p {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+/* Features Grid */
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.featureCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 2rem;
+  border-radius: var(--radius-card);
+  transition: transform var(--transition);
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+}
+
+.featureIconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.featureIcon {
+  color: var(--primary);
+}
+
+.featureCard h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.featureCard p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Portals Grid */
+.portalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.portalCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 2rem;
+  border-radius: var(--radius-card);
+  text-align: center;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.portalCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.portalCard p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 2;
+}
+
+.portalCard::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: 1;
+}
+
+.portalCard:hover {
+  transform: translateY(-5px);
+}
+
+.portalCard:hover::before {
+  opacity: 0.1;
+}
+
+/* Portal Accents */
+.citizen:hover { border-color: var(--accent-citizen); }
+.citizen::before { background: var(--accent-citizen); }
+
+.student:hover { border-color: var(--accent-student); }
+.student::before { background: var(--accent-student); }
+
+.university:hover { border-color: var(--accent-university); }
+.university::before { background: var(--accent-university); }
+
+.government:hover { border-color: var(--accent-government); }
+.government::before { background: var(--accent-government); }

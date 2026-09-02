@@ -1,0 +1,207 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--text-muted);
+}
+
+.header {
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.statCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.statIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statCard h3 {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+  }
+}
+
+.challengesPanel, .actionCard {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.panelHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panelHeader h2 {
+  font-size: 1.25rem;
+}
+
+.viewAll {
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.viewAll:hover {
+  text-decoration: underline;
+}
+
+.challengeRow {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background var(--transition);
+}
+
+.challengeRow:hover {
+  background: var(--surface-hover);
+}
+
+.challengeInfo h4 {
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.domain {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.challengeMeta {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.statusBadge, .severityBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.statusBadge {
+  background: var(--surface-border);
+}
+.statusBadge.submitted { background: rgba(59,130,246,0.1); color: var(--accent-student); }
+.statusBadge.matched { background: rgba(245,158,11,0.1); color: var(--warning); }
+.statusBadge.deployed { background: rgba(16,185,129,0.1); color: var(--success); }
+
+.severityBadge.critical { color: var(--critical); border: 1px solid rgba(239,68,68,0.3); }
+.severityBadge.high { color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+.severityBadge.medium { color: var(--accent-student); border: 1px solid rgba(59,130,246,0.3); }
+.severityBadge.low { color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+
+.emptyState {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.emptyIcon {
+  opacity: 0.2;
+  margin-bottom: 1rem;
+}
+
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.actionCard {
+  padding: 1.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(99, 102, 241, 0.05) 100%);
+}
+
+.actionCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.actionCard p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.actionBtn {
+  display: inline-block;
+  width: 100%;
+  background: var(--primary-gradient);
+  color: white;
+  padding: 0.875rem;
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
