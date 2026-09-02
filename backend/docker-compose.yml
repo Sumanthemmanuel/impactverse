@@ -1,0 +1,99 @@
+version: "3.9"
+
+services:
+  # PostgreSQL with PostGIS and pgvector extensions
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: impactverse_db
+    environment:
+      POSTGRES_USER: impactverse
+      POSTGRES_PASSWORD: impactverse_secret
+      POSTGRES_DB: impactverse_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U impactverse -d impactverse_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis for caching, rate limiting, and Celery broker
+  redis:
+    image: redis:7-alpine
+    container_name: impactverse_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # FastAPI Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: impactverse_app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+  # Celery Worker for background tasks
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: impactverse_celery
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app worker --loglevel=info --concurrency=4
+    restart: unless-stopped
+
+  # Celery Beat for periodic tasks
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: impactverse_beat
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:

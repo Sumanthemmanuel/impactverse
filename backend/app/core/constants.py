@@ -1,0 +1,92 @@
+import enum
+
+class UserRole(str, enum.Enum):
+    CITIZEN = "CITIZEN"
+    VERIFIER = "VERIFIER"
+    HEI_ADMIN = "HEI_ADMIN"
+    FACULTY = "FACULTY"
+    STUDENT = "STUDENT"
+    INDUSTRY = "INDUSTRY"
+    CSR = "CSR"
+    GOVERNMENT = "GOVERNMENT"
+    PLATFORM_ADMIN = "PLATFORM_ADMIN"
+
+class ChallengeStatus(str, enum.Enum):
+    SUBMITTED = "SUBMITTED"
+    UNDER_REVIEW = "UNDER_REVIEW"
+    VALIDATED = "VALIDATED"
+    MATCHED = "MATCHED"
+    IN_PROGRESS = "IN_PROGRESS"
+    DEPLOYED = "DEPLOYED"
+    MEASURING = "MEASURING"
+    CLOSED = "CLOSED"
+    REJECTED = "REJECTED"
+
+class ChallengeDomain(str, enum.Enum):
+    WATER = "WATER"
+    SANITATION = "SANITATION"
+    HEALTHCARE = "HEALTHCARE"
+    EDUCATION = "EDUCATION"
+    INFRASTRUCTURE = "INFRASTRUCTURE"
+    AGRICULTURE = "AGRICULTURE"
+    ENVIRONMENT = "ENVIRONMENT"
+    ENERGY = "ENERGY"
+    TRANSPORT = "TRANSPORT"
+    DIGITAL_SERVICES = "DIGITAL_SERVICES"
+    PUBLIC_SAFETY = "PUBLIC_SAFETY"
+    GOVERNANCE = "GOVERNANCE"
+    OTHER = "OTHER"
+
+class ChallengeSeverity(str, enum.Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+class ProjectStatus(str, enum.Enum):
+    PROPOSED = "PROPOSED"
+    ACCEPTED = "ACCEPTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    REVIEW = "REVIEW"
+    PILOT = "PILOT"
+    DEPLOYED = "DEPLOYED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+class PartnerType(str, enum.Enum):
+    INDUSTRY = "INDUSTRY"
+    CSR = "CSR"
+    STARTUP = "STARTUP"
+    NGO = "NGO"
+
+class SupportType(str, enum.Enum):
+    MENTOR = "MENTOR"
+    SPONSOR = "SPONSOR"
+    PILOT_PARTNER = "PILOT_PARTNER"
+    TECH_TRANSFER = "TECH_TRANSFER"
+
+class InterestStatus(str, enum.Enum):
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    WITHDRAWN = "WITHDRAWN"
+
+class MilestoneStatus(str, enum.Enum):
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    OVERDUE = "OVERDUE"
+    CANCELLED = "CANCELLED"
+
+class DeploymentStatus(str, enum.Enum):
+    NOT_STARTED = "NOT_STARTED"
+    PILOT = "PILOT"
+    PARTIAL = "PARTIAL"
+    FULL = "FULL"
+    DISCONTINUED = "DISCONTINUED"
+
+class MediaType(str, enum.Enum):
+    IMAGE = "IMAGE"
+    VIDEO = "VIDEO"
+    DOCUMENT = "DOCUMENT"
+    AUDIO = "AUDIO"
