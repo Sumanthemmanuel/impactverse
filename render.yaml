@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: impactverse-classifier
+    env: docker
+    rootDir: classifier
+    repo: https://github.com/Sumanthemmanuel/impactverse.git
+    branch: main
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8001
