@@ -129,14 +129,22 @@ export default function SubmitChallenge() {
     setError("");
     setLoading(true);
     try {
-      const { data, error: sbError } = await supabase
-        .from('challenges')
-        .insert([formData])
-        .select();
+      const payload = {
+        title: formData.title,
+        narrative: formData.narrative + (formData.proposed_solution ? `\n\nProposed Solution: ${formData.proposed_solution}` : ''),
+        domain: formData.domain,
+        severity: formData.severity,
+        district: formData.district,
+        is_anonymous: formData.is_anonymous,
+        location: formData.latitude !== null && formData.longitude !== null ? {
+          latitude: formData.latitude,
+          longitude: formData.longitude
+        } : undefined
+      };
 
-      if (sbError) throw sbError;
+      const res = await api.post('/challenges', payload);
       
-      if (data && data.length > 0) {
+      if (res.data) {
         router.push(`/dashboard`); // Go back to dashboard to see realtime in action!
       }
     } catch (err: any) {
