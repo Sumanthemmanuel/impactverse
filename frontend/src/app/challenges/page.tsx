@@ -61,7 +61,7 @@ export default function ChallengesPage() {
             <Link href={`/challenges/${challenge.id}`} key={challenge.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <span className={styles.domainBadge}>{challenge.domain}</span>
-                <span className={styles.statusBadge}>{challenge.status}</span>
+                <span className={`${styles.statusBadge} ${styles[challenge.status?.toLowerCase() ?? '']}`}>{challenge.status}</span>
               </div>
               
               <h2 className={styles.cardTitle}>{challenge.title}</h2>

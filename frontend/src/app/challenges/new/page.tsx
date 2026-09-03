@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api, classifierApi } from "@/lib/api";
 import styles from "./page.module.css";
 import { UploadCloud, Bot, MapPin, AlertTriangle, Send, Camera as CameraIcon } from "lucide-react";
 
 import { supabase } from "@/lib/supabase";
-import { Geolocation } from '@capacitor/geolocation';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+// Capacitor plugins are only available inside the native Android/iOS shell.
+// On web we use the standard browser APIs instead (navigator.geolocation +
+// <input type="file" capture="environment">).
 
 const DOMAINS = [
   "Education", "Agriculture", "Healthcare", "Water Resources", 
@@ -37,42 +38,50 @@ export default function SubmitChallenge() {
   const [locationStatus, setLocationStatus] = useState<"IDLE" | "LOADING" | "SUCCESS" | "ERROR">("IDLE");
 
   const [photo, setPhoto] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const takePhoto = async () => {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 80,
-        allowEditing: false,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera // Forces the live camera
-      });
-      setPhoto(image.dataUrl || null);
-    } catch (err) {
-      console.error("Camera error:", err);
-    }
+  // Works on all browsers: opens native camera on mobile, file picker on desktop.
+  const takePhoto = () => {
+    fileInputRef.current?.click();
   };
 
-  const captureLocation = async () => {
-    setLocationStatus("LOADING");
-    try {
-      const permissions = await Geolocation.checkPermissions();
-      if (permissions.location !== 'granted') {
-        await Geolocation.requestPermissions();
-      }
-      
-      const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-      setFormData(prev => ({
-        ...prev,
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      }));
-      setLocationStatus("SUCCESS");
-      setError("");
-    } catch (err) {
-      console.error("Location error:", err);
-      setError("Location permission denied. It is compulsory to share your location.");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setPhoto(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  // Uses the standard browser Geolocation API — works on web, Android, and iOS.
+  const captureLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
       setLocationStatus("ERROR");
+      return;
     }
+    setLocationStatus("LOADING");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData(prev => ({
+          ...prev,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }));
+        setLocationStatus("SUCCESS");
+        setError("");
+      },
+      (err) => {
+        console.error("Location error:", err);
+        setError(
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied. Please allow location access in your browser settings."
+            : "Could not get location. Please try again."
+        );
+        setLocationStatus("ERROR");
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
   };
 
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
@@ -83,30 +92,32 @@ export default function SubmitChallenge() {
       return;
     }
     if (formData.latitude === null) {
-      setError("Compulsory: Please capture your live location first.");
+      setError("Please capture your location first.");
       return;
     }
-    if (!photo) {
-      setError("Compulsory: Please capture a live photo of the issue.");
-      return;
-    }
+    // Photo is encouraged but not a hard blocker on web.
     setError("");
     setLoading(true);
     try {
       const res = await classifierApi.post("/classify/full", {
-        text: formData.narrative
+        text: formData.narrative,
+        lat: formData.latitude,
+        lng: formData.longitude,
       });
-      setAiAnalysis(res.data);
+      const d = res.data;
+      setAiAnalysis(d);
+      // /classify/full returns: domain, top_3_predictions, severity_boost,
+      // geo_validation.district_hint — map these to formData.
       setFormData(prev => ({
         ...prev,
-        domain: prev.domain || (res.data.predictions[0]?.domain) || DOMAINS[0],
-        severity: res.data.severity || prev.severity,
-        district: res.data.district_hint || prev.district
+        domain: prev.domain || d.domain || DOMAINS[0],
+        district: prev.district || d.geo_validation?.district_hint || "",
       }));
       setStep(2);
     } catch (err) {
       console.error(err);
-      setError("AI analysis failed. Please select domain manually.");
+      // AI server not running is not fatal — let user fill manually.
+      setError("AI server unreachable. You can still fill the form manually below.");
       setStep(2);
     } finally {
       setLoading(false);
@@ -155,9 +166,19 @@ export default function SubmitChallenge() {
         <form onSubmit={handleSubmit} className={styles.form}>
           {step === 1 && (
             <div className={styles.stepContent}>
-              
-              <div 
-                className={`${styles.uploadZone} ${photo ? styles.hasPhoto : ''}`} 
+
+              {/* Hidden file input — triggered by the upload zone click */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+
+              <div
+                className={`${styles.uploadZone} ${photo ? styles.hasPhoto : ''}`}
                 onClick={takePhoto}
                 style={{ backgroundImage: photo ? `url(${photo})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
@@ -166,13 +187,13 @@ export default function SubmitChallenge() {
                     <div className={styles.uploadIconWrapper}>
                       <CameraIcon size={48} />
                     </div>
-                    <h3>Take Live Photo (Compulsory)</h3>
-                    <p>Tap here to open your camera and snap the issue.</p>
+                    <h3>Take Photo / Upload Image</h3>
+                    <p>Tap to open your camera or choose a file from your device.</p>
                   </>
                 )}
                 {photo && (
                   <div className={styles.photoOverlay}>
-                    <p>Tap to retake photo</p>
+                    <p>Tap to retake / change photo</p>
                   </div>
                 )}
               </div>
@@ -214,11 +235,11 @@ export default function SubmitChallenge() {
                 </button>
               </div>
               
-              <button 
-                type="button" 
-                className={styles.nextBtn} 
+              <button
+                type="button"
+                className={styles.nextBtn}
                 onClick={analyzeWithAI}
-                disabled={loading || locationStatus !== 'SUCCESS'}
+                disabled={loading || locationStatus === 'LOADING'}
               >
                 <Bot size={18} /> {loading ? "Analyzing..." : "Next: AI Analysis"}
               </button>
@@ -236,12 +257,25 @@ export default function SubmitChallenge() {
                   <div className={styles.aiGrid}>
                     <div className={styles.aiItem}>
                       <span className={styles.aiLabel}>Suggested Domain:</span>
-                      <span className={styles.aiValue}>{aiAnalysis.predictions[0]?.domain} ({(aiAnalysis.predictions[0]?.confidence * 100).toFixed(1)}%)</span>
+                      <span className={styles.aiValue}>
+                        {aiAnalysis.domain}
+                        {aiAnalysis.confidence != null && ` (${(aiAnalysis.confidence * 100).toFixed(1)}%)`}
+                      </span>
                     </div>
                     <div className={styles.aiItem}>
-                      <span className={styles.aiLabel}>Detected Severity:</span>
-                      <span className={`${styles.aiValue} ${styles[aiAnalysis.severity?.toLowerCase() || '']}`}>{aiAnalysis.severity}</span>
+                      <span className={styles.aiLabel}>Priority Score:</span>
+                      <span className={styles.aiValue}>{aiAnalysis.priority_score?.toFixed(1) ?? "—"}</span>
                     </div>
+                    <div className={styles.aiItem}>
+                      <span className={styles.aiLabel}>Classifier Method:</span>
+                      <span className={styles.aiValue}>{aiAnalysis.method ?? "—"}</span>
+                    </div>
+                    {aiAnalysis.geo_validation?.district_hint && (
+                      <div className={styles.aiItem}>
+                        <span className={styles.aiLabel}>District Detected:</span>
+                        <span className={styles.aiValue}>{aiAnalysis.geo_validation.district_hint}</span>
+                      </div>
+                    )}
                     {aiAnalysis.is_spam && (
                       <div className={styles.spamAlert}>
                         <AlertTriangle size={16} /> Possible Spam Detected. Your submission will be reviewed.

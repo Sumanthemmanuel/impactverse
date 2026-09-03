@@ -123,14 +123,13 @@ export default function LandingPage() {
       </section>
 
       {/* ── Official Banner ───────────────────────────────────────────── */}
-      <section className={styles.bannerStrip} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#fff', padding: '1rem 0' }}>
+      <section className={styles.bannerStrip}>
         <Image
-          src="/govt_banner.jpeg"
-          alt="Government of Jharkhand"
-          width={800}
-          height={150}
+          src="/banner.jpeg"
+          alt="Government of Jharkhand — Together for Jharkhand"
+          fill
           className={styles.bannerImg}
-          style={{ objectFit: 'contain', width: 'auto', height: '150px' }}
+          sizes="100vw"
         />
       </section>
 

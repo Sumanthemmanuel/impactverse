@@ -95,29 +95,29 @@ export default function Dashboard() {
       </div>
 
       <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
+        <div className={`${styles.statCard} ${styles.total}`}>
           <div className={styles.statIconWrapper}><Activity size={24} /></div>
           <div>
             <h3>Total Challenges</h3>
             <div className={styles.statValue}>{stats.total}</div>
           </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ color: "var(--warning)", background: "rgba(245,158,11,0.1)" }}><Clock size={24} /></div>
+        <div className={`${styles.statCard} ${styles.active}`}>
+          <div className={styles.statIconWrapper}><Clock size={24} /></div>
           <div>
             <h3>Pending</h3>
             <div className={styles.statValue}>{stats.pending}</div>
           </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ color: "var(--accent-student)", background: "rgba(59,130,246,0.1)" }}><Bot size={24} /></div>
+        <div className={`${styles.statCard} ${styles.solved}`}>
+          <div className={styles.statIconWrapper}><Bot size={24} /></div>
           <div>
             <h3>AI Matched</h3>
             <div className={styles.statValue}>{stats.matched}</div>
           </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ color: "var(--success)", background: "rgba(16,185,129,0.1)" }}><CheckCircle2 size={24} /></div>
+        <div className={`${styles.statCard} ${styles.critical}`}>
+          <div className={styles.statIconWrapper}><CheckCircle2 size={24} /></div>
           <div>
             <h3>Deployed</h3>
             <div className={styles.statValue}>{stats.completed}</div>
