@@ -11,14 +11,4 @@ services:
       - key: PORT
         value: 8001
 
-  - type: web
-    name: impactverse-backend
-    env: docker
-    rootDir: backend
-    repo: https://github.com/Sumanthemmanuel/impactverse.git
-    branch: main
-    plan: free
-    healthCheckPath: /api/v1/health
-    envVars:
-      - key: PORT
-        value: 8000
+
